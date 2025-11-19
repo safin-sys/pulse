@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics SDK Test</title>
+</head>
+
+<body>
+    <h1>Analytics SDK Test Page</h1>
+    <button id="trackBtn">Track Custom Event</button>
+    <script type="module">
+        import { analytics } from './dist/index.js';
+
+        // Initialize with a fake key and local endpoint
+        analytics.init('TEST_API_KEY', {
+            endpoint: 'https://httpbin.org/post', // Echo service to see the payload
+            batchSize: 2,
+            batchTimeout: 2000
+        });
+
+        document.getElementById('trackBtn').addEventListener('click', () => {
+            analytics.track('button_click', { buttonId: 'trackBtn' });
+            console.log('Tracked button_click');
+        });
+
+        console.log('Analytics initialized');
+    </script>
+</body>
+
+</html>

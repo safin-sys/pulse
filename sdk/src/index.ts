@@ -1,4 +1,1 @@
-export function hello() {
-  console.log("Hello, Analytics SDK!");
-  return 1;
-}
+export { analytics } from './client.js';

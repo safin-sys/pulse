@@ -3,7 +3,7 @@ import { sendBatch } from './sender.js';
 interface BatcherConfig {
     batchSize: number;
     timeout: number;
-    endpoint: string;
+    apiKey: string;
 }
 
 export class Batcher {
@@ -16,7 +16,7 @@ export class Batcher {
     }
 
     add(event: any) {
-        this.queue.push(event);
+        this.queue.push({ ...event, apiKey: this.config.apiKey });
         if (this.queue.length >= this.config.batchSize) {
             this.flush();
         } else if (!this.timeoutId) {
@@ -32,7 +32,7 @@ export class Batcher {
         if (this.queue.length > 0) {
             const eventsToSend = [...this.queue];
             this.queue = [];
-            sendBatch(this.config.endpoint, eventsToSend);
+            sendBatch(eventsToSend);
         }
     }
 }

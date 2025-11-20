@@ -5,24 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics SDK Test</title>
+    <style>
+        button,
+        a {
+            margin: 10px;
+            display: inline-block;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Analytics SDK Test Page</h1>
-    <button id="trackBtn">Track Custom Event</button>
+
+    <button id="btn-1">Click Me (Button)</button>
+    <a href="#" id="link-1">Click Me (Link)</a>
+    <div id="container">
+        <button class="nested">Nested Button</button>
+    </div>
+
     <script type="module">
         import { analytics } from './dist/index.js';
 
-        // Initialize with a fake key and local endpoint
-        analytics.init('TEST_API_KEY', {
-            endpoint: 'https://httpbin.org/post', // Echo service to see the payload
+        // Initialize
+        analytics('TEST_API_KEY', {
             batchSize: 2,
             batchTimeout: 2000
-        });
-
-        document.getElementById('trackBtn').addEventListener('click', () => {
-            analytics.track('button_click', { buttonId: 'trackBtn' });
-            console.log('Tracked button_click');
         });
 
         console.log('Analytics initialized');

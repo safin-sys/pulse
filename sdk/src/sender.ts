@@ -1,4 +1,5 @@
-export const sendBatch = async (endpoint: string, events: any[]) => {
+export const sendBatch = async (events: any[]) => {
+    const endpoint = "http://localhost:3000/api/collect";
     if (events.length === 0) return;
 
     const payload = JSON.stringify(events);

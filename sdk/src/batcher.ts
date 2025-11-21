@@ -16,7 +16,7 @@ export class Batcher {
     }
 
     add(event: any) {
-        this.queue.push({ ...event, apiKey: this.config.apiKey });
+        this.queue.push({ ...event });
         if (this.queue.length >= this.config.batchSize) {
             this.flush();
         } else if (!this.timeoutId) {
@@ -30,7 +30,7 @@ export class Batcher {
             this.timeoutId = null;
         }
         if (this.queue.length > 0) {
-            const eventsToSend = [...this.queue];
+            const eventsToSend = { events: [...this.queue], apiKey: this.config.apiKey };
             this.queue = [];
             sendBatch(eventsToSend);
         }

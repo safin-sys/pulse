@@ -1,4 +1,4 @@
-import { Batcher } from './batcher.js';
+import { createBatcher, type BatcherConfig } from './batcher.js';
 import { getVisitorId } from './ids.js';
 import { track, setupClickTracking } from './tracker.js';
 
@@ -8,11 +8,11 @@ interface AnalyticsOptions {
 }
 
 export const analytics = (apiKey: string, options: AnalyticsOptions = {}) => {
-    const batcher = new Batcher({
-        apiKey,
-        batchSize: options.batchSize || 10,
-        timeout: options.batchTimeout || 5000,
-    });
+    const batcherOptions: BatcherConfig = { apiKey };
+    if (options.batchSize) batcherOptions.batchSize = options.batchSize;
+    if (options.batchTimeout) batcherOptions.timeout = options.batchTimeout;
+
+    const batcher = createBatcher(batcherOptions);
 
     const trackerOptions = {
         batcher,

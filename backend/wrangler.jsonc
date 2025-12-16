@@ -1,6 +1,13 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "backend",
-  "compatibility_date": "2025-08-03",
-  "main": "./src/index.tsx"
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "backend",
+	"compatibility_date": "2025-08-03",
+	"main": "./src/index.tsx",
+	"d1_databases": [
+		{
+			"binding": "v0",
+			"database_name": "v0",
+			"database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a"
+		}
+	]
 }

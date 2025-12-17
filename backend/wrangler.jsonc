@@ -5,8 +5,8 @@
 	"main": "./src/index.tsx",
 	"d1_databases": [
 		{
-			"binding": "v0",
-			"database_name": "v0",
+			"binding": "DB",
+			"database_name": "DB",
 			"database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a"
 		}
 	]

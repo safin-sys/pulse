@@ -1,7 +1,7 @@
-import generate_token from "../../utils/jwt"
-import { hash } from "../../utils/password"
-import { check_user_exists, create_user } from "./repository"
-import { SignupBody, User } from "./types"
+import generate_token from "../../utils/jwt";
+import { hash, verify } from "../../utils/password";
+import { check_user_exists, create_user } from "./repository";
+import { SignupBody, User } from "./types";
 
 const signup = async (
     db: D1Database,
@@ -9,12 +9,18 @@ const signup = async (
     access_token_secret: string,
     refresh_token_secret: string
 ): Promise<AResponse> => {
-    const user = await check_user_exists(db, data.email)
+    const user = await check_user_exists(db, data.email);
     if (user) {
-        return { success: false, message: 'User already exists', data: null, error: null, code: 400 }
+        return {
+            success: false,
+            message: "User already exists",
+            data: null,
+            error: null,
+            code: 400,
+        };
     }
 
-    const password_hash = await hash(data.password)
+    const password_hash = await hash(data.password);
 
     const body: User = {
         id: crypto.randomUUID(),
@@ -32,28 +38,91 @@ const signup = async (
         last_failed_login_at: Date.now(),
         locked_at: Date.now(),
         locked_until: Date.now(),
-    }
+    };
 
-    await create_user(db, body)
+    await create_user(db, body);
 
     const payload = {
         id: body.id,
-        role: 'user',
-    }
+        role: "user",
+    };
 
     const access_token = await generate_token(
         payload,
         "access",
         access_token_secret
-    )
+    );
 
     const refresh_token = await generate_token(
         payload,
         "refresh",
         refresh_token_secret
-    )
+    );
 
-    return { success: true, message: 'User created successfully', data: { access_token, refresh_token }, error: null, code: 201 }
-}
+    return {
+        success: true,
+        message: "User created successfully",
+        data: { access_token, refresh_token },
+        error: null,
+        code: 201,
+    };
+};
 
-export { signup }
+const login = async (
+    db: D1Database,
+    data: { email: string; password: string },
+    access_token_secret: string,
+    refresh_token_secret: string
+): Promise<AResponse> => {
+    const user = await check_user_exists(db, data.email);
+
+    if (!user) {
+        return {
+            success: false,
+            message: "Invalid email or password",
+            data: null,
+            error: null,
+            code: 401,
+        };
+    }
+
+    const isPasswordValid = await verify(data.password, user.password_hash);
+
+    if (!isPasswordValid) {
+        return {
+            success: false,
+            message: "Invalid email or password",
+            data: null,
+            error: null,
+            code: 401,
+        };
+    }
+
+    // generate access and refresh tokens
+    const payload = {
+        id: user.id,
+        role: "user",
+    };
+
+    const access_token = await generate_token(
+        payload,
+        "access",
+        access_token_secret
+    );
+
+    const refresh_token = await generate_token(
+        payload,
+        "refresh",
+        refresh_token_secret
+    );
+
+    return {
+        success: true,
+        message: "Login successful",
+        data: { access_token, refresh_token },
+        error: null,
+        code: 200,
+    };
+};
+
+export { signup, login };

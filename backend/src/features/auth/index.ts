@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { SignupBodySchema } from "./types";
-import { signup } from "./service";
+import { LoginBodySchema, SignupBodySchema } from "./types";
+import { login, signup } from "./service";
 import response from "../../utils/response";
 import { validate } from "../../middleware/validate";
 
@@ -10,6 +10,19 @@ app.post("/signup", validate("json", SignupBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await signup(
+        c.env.DB,
+        data,
+        c.env.ACCESS_TOKEN_SECRET,
+        c.env.REFRESH_TOKEN_SECRET
+    );
+
+    return response(c, res);
+});
+
+app.post("/login", validate("json", LoginBodySchema), async (c) => {
+    const data = c.req.valid("json");
+
+    const res = await login(
         c.env.DB,
         data,
         c.env.ACCESS_TOKEN_SECRET,

@@ -1,6 +1,5 @@
 import { sign, verify } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
-import { hash } from "./password";
 
 interface Payload {
     id: string;

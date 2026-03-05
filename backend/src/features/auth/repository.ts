@@ -1,4 +1,3 @@
-import { JWTPayload } from "hono/utils/jwt/types";
 import { User } from "./types";
 import { token_hash } from "../../utils/jwt";
 

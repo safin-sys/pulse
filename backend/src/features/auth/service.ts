@@ -1,4 +1,4 @@
-import { generate_token, token_hash, verify_token } from "../../utils/jwt";
+import { generate_token, verify_token } from "../../utils/jwt";
 import { hash, verify } from "../../utils/password";
 import { check_user_exists, create_user, delete_refresh_token } from "./repository";
 import { SignupBody, User } from "./types";

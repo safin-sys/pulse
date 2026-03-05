@@ -56,7 +56,8 @@ const signup = async (
     const refresh_token = await generate_token(
         payload,
         "refresh",
-        refresh_token_secret
+        refresh_token_secret,
+        db
     );
 
     return {
@@ -113,7 +114,8 @@ const login = async (
     const refresh_token = await generate_token(
         payload,
         "refresh",
-        refresh_token_secret
+        refresh_token_secret,
+        db
     );
 
     return {

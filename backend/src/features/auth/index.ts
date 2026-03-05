@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { LoginBodySchema, SignupBodySchema } from "./types";
-import { login, signup } from "./service";
+import { login, refresh, signup } from "./service";
 import response from "../../utils/response";
 import { validate } from "../../middleware/validate";
 
@@ -25,6 +25,29 @@ app.post("/login", validate("json", LoginBodySchema), async (c) => {
     const res = await login(
         c.env.DB,
         data,
+        c.env.ACCESS_TOKEN_SECRET,
+        c.env.REFRESH_TOKEN_SECRET
+    );
+
+    return response(c, res);
+});
+
+app.post("/refresh", async (c) => {
+    const refresh_token = c.req.header("Authorization")?.split(" ")[1];
+
+    if (!refresh_token) {
+        return response(c, {
+            success: false,
+            message: "Refresh token is required",
+            data: null,
+            error: null,
+            code: 401,
+        });
+    }
+
+    const res = await refresh(
+        c.env.DB,
+        refresh_token,
         c.env.ACCESS_TOKEN_SECRET,
         c.env.REFRESH_TOKEN_SECRET
     );

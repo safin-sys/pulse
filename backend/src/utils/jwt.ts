@@ -1,4 +1,4 @@
-import { sign } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { hash } from "./password";
 
@@ -14,7 +14,7 @@ const generate_token = async (
     payload: Payload,
     type: "access" | "refresh",
     secret: string,
-    db?: D1Database
+    db?: D1Database,
 ) => {
     const { access_expiration, refresh_expiration } = {
         access_expiration: 60 * 5, // 5 minutes
@@ -37,16 +37,16 @@ const generate_token = async (
 
     if (type === "refresh") {
         const refresh_hash = await hash(token);
-        
+
         await db
             ?.prepare(
-                "INSERT INTO refresh_tokens (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)"
+                "INSERT INTO refresh_tokens (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)",
             )
             .bind(
                 refresh_hash,
                 payload.id,
                 Date.now(),
-                Date.now() + refresh_expiration * 1000
+                Date.now() + refresh_expiration * 1000,
             )
             .run();
     }
@@ -54,4 +54,8 @@ const generate_token = async (
     return token;
 };
 
-export default generate_token;
+const verify_token = async (token: string, secret: string) => {
+    return await verify(token, secret) as JWTPayload;
+};
+
+export { generate_token, verify_token };

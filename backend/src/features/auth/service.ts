@@ -1,4 +1,4 @@
-import generate_token from "../../utils/jwt";
+import { generate_token, verify_token } from "../../utils/jwt";
 import { hash, verify } from "../../utils/password";
 import { check_user_exists, create_user } from "./repository";
 import { SignupBody, User } from "./types";
@@ -7,7 +7,7 @@ const signup = async (
     db: D1Database,
     data: SignupBody,
     access_token_secret: string,
-    refresh_token_secret: string
+    refresh_token_secret: string,
 ): Promise<AResponse> => {
     const user = await check_user_exists(db, data.email);
     if (user) {
@@ -50,14 +50,14 @@ const signup = async (
     const access_token = await generate_token(
         payload,
         "access",
-        access_token_secret
+        access_token_secret,
     );
 
     const refresh_token = await generate_token(
         payload,
         "refresh",
         refresh_token_secret,
-        db
+        db,
     );
 
     return {
@@ -73,7 +73,7 @@ const login = async (
     db: D1Database,
     data: { email: string; password: string },
     access_token_secret: string,
-    refresh_token_secret: string
+    refresh_token_secret: string,
 ): Promise<AResponse> => {
     const user = await check_user_exists(db, data.email);
 
@@ -108,14 +108,14 @@ const login = async (
     const access_token = await generate_token(
         payload,
         "access",
-        access_token_secret
+        access_token_secret,
     );
 
     const refresh_token = await generate_token(
         payload,
         "refresh",
         refresh_token_secret,
-        db
+        db,
     );
 
     return {
@@ -127,4 +127,57 @@ const login = async (
     };
 };
 
-export { signup, login };
+const refresh = async (
+    db: D1Database,
+    refresh_token: string,
+    access_token_secret: string,
+    refresh_token_secret: string,
+): Promise<AResponse> => {
+    try {
+        const token = await verify_token(refresh_token, refresh_token_secret);
+        if (!token || token.type !== "refresh") {
+            return {
+                success: false,
+                message: "Invalid refresh token",
+                data: null,
+                error: null,
+                code: 401,
+            };
+        }
+
+        const new_access_token = await generate_token(
+            { id: token.id as string, role: token.role as string },
+            "access",
+            access_token_secret,
+        );
+
+        const new_refresh_token = await generate_token(
+            { id: token.id as string, role: token.role as string },
+            "refresh",
+            refresh_token_secret,
+            db,
+        );
+
+        return {
+            success: true,
+            message: "Refresh successful",
+            data: {
+                access_token: new_access_token,
+                refresh_token: new_refresh_token,
+            },
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: "Invalid refresh token",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 401,
+        };
+    }
+};
+
+export { signup, login, refresh };

@@ -1,4 +1,6 @@
+import { JWTPayload } from "hono/utils/jwt/types";
 import { User } from "./types";
+import { token_hash } from "../../utils/jwt";
 
 const check_user_exists = async (db: D1Database, email: string) => {
     return await db.prepare(
@@ -32,4 +34,13 @@ const create_user = async (db: D1Database, data: User) => {
         .run();
 }
 
-export { check_user_exists, create_user }
+const delete_refresh_token = async (db: D1Database, token: string) => {
+    const refresh_hash = await token_hash(token);
+    return await db.prepare(
+        "DELETE FROM refresh_tokens WHERE token_hash = ?",
+    )
+        .bind(refresh_hash)
+        .run();
+}
+
+export { check_user_exists, create_user, delete_refresh_token }

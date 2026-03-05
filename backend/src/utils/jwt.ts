@@ -10,6 +10,20 @@ interface Payload {
     data?: any;
 }
 
+const token_hash = async (token: string) => {
+    return crypto.subtle
+        .digest("SHA-256", new TextEncoder().encode(token))
+        .then((hash) => {
+            return Array.from(new Uint8Array(hash))
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+        })
+        .catch((error) => {
+            console.error(error);
+            return null;
+        });
+};
+
 const generate_token = async (
     payload: Payload,
     type: "access" | "refresh",
@@ -36,8 +50,7 @@ const generate_token = async (
     const token = await sign(jwt_payload, secret);
 
     if (type === "refresh") {
-        const refresh_hash = await hash(token);
-
+        const refresh_hash = await token_hash(token);
         await db
             ?.prepare(
                 "INSERT INTO refresh_tokens (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)",
@@ -54,8 +67,18 @@ const generate_token = async (
     return token;
 };
 
-const verify_token = async (token: string, secret: string) => {
-    return await verify(token, secret) as JWTPayload;
+const verify_token = async (db: D1Database, token: string, secret: string) => {
+    const refresh_hash = await token_hash(token);
+    const refresh_token = await db
+        .prepare("SELECT * FROM refresh_tokens WHERE token_hash = ?")
+        .bind(refresh_hash)
+        .run();
+
+    if (refresh_token.results.length === 0) {
+        return null;
+    }
+
+    return (await verify(token, secret)) as JWTPayload;
 };
 
-export { generate_token, verify_token };
+export { generate_token, token_hash, verify_token };

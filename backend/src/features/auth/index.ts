@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { LoginBodySchema, SignupBodySchema } from "./types";
-import { login, refresh, signup } from "./service";
+import { login, logout, refresh, signup } from "./service";
 import response from "../../utils/response";
 import { validate } from "../../middleware/validate";
 
@@ -13,7 +13,7 @@ app.post("/signup", validate("json", SignupBodySchema), async (c) => {
         c.env.DB,
         data,
         c.env.ACCESS_TOKEN_SECRET,
-        c.env.REFRESH_TOKEN_SECRET
+        c.env.REFRESH_TOKEN_SECRET,
     );
 
     return response(c, res);
@@ -26,7 +26,7 @@ app.post("/login", validate("json", LoginBodySchema), async (c) => {
         c.env.DB,
         data,
         c.env.ACCESS_TOKEN_SECRET,
-        c.env.REFRESH_TOKEN_SECRET
+        c.env.REFRESH_TOKEN_SECRET,
     );
 
     return response(c, res);
@@ -49,7 +49,29 @@ app.post("/refresh", async (c) => {
         c.env.DB,
         refresh_token,
         c.env.ACCESS_TOKEN_SECRET,
-        c.env.REFRESH_TOKEN_SECRET
+        c.env.REFRESH_TOKEN_SECRET,
+    );
+
+    return response(c, res);
+});
+
+app.post("/logout", async (c) => {
+    const refresh_token = c.req.header("Authorization")?.split(" ")[1];
+
+    if (!refresh_token) {
+        return response(c, {
+            success: false,
+            message: "Refresh token is required",
+            data: null,
+            error: null,
+            code: 401,
+        });
+    }
+
+    const res = await logout(
+        c.env.DB,
+        refresh_token,
+        c.env.REFRESH_TOKEN_SECRET,
     );
 
     return response(c, res);

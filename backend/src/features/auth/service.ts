@@ -1,6 +1,6 @@
-import { generate_token, verify_token } from "../../utils/jwt";
+import { generate_token, token_hash, verify_token } from "../../utils/jwt";
 import { hash, verify } from "../../utils/password";
-import { check_user_exists, create_user } from "./repository";
+import { check_user_exists, create_user, delete_refresh_token } from "./repository";
 import { SignupBody, User } from "./types";
 
 const signup = async (
@@ -134,7 +134,7 @@ const refresh = async (
     refresh_token_secret: string,
 ): Promise<AResponse> => {
     try {
-        const token = await verify_token(refresh_token, refresh_token_secret);
+        const token = await verify_token(db, refresh_token, refresh_token_secret);
         if (!token || token.type !== "refresh") {
             return {
                 success: false,
@@ -180,4 +180,42 @@ const refresh = async (
     }
 };
 
-export { signup, login, refresh };
+const logout = async (
+    db: D1Database,
+    refresh_token: string,
+    refresh_token_secret: string,
+): Promise<AResponse> => {
+    try {
+        const token = await verify_token(db, refresh_token, refresh_token_secret);
+        if (!token || token.type !== "refresh") {
+            return {
+                success: true,
+                message: "Already logged out",
+                data: null,
+                error: null,
+                code: 200,
+            };
+        }
+
+        await delete_refresh_token(db, refresh_token);
+
+        return {
+            success: true,
+            message: "Logout successful",
+            data: null,
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: "Internal server error",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 500,
+        };
+    }
+};
+
+export { signup, login, refresh, logout };

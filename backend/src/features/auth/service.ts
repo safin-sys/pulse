@@ -1,7 +1,13 @@
+import send_email from "../../utils/emails";
 import { generate_token, verify_token } from "../../utils/jwt";
 import { hash, verify } from "../../utils/password";
-import { check_user_exists, create_user, delete_refresh_token } from "./repository";
-import { SignupBody, User } from "./types";
+import {
+    check_user_exists,
+    create_user,
+    delete_refresh_token,
+    generate_reset_token,
+} from "./repository";
+import { ForgotBody, LoginBody, SignupBody, User } from "./types";
 
 const signup = async (
     db: D1Database,
@@ -71,7 +77,7 @@ const signup = async (
 
 const login = async (
     db: D1Database,
-    data: { email: string; password: string },
+    data: LoginBody,
     access_token_secret: string,
     refresh_token_secret: string,
 ): Promise<AResponse> => {
@@ -134,7 +140,11 @@ const refresh = async (
     refresh_token_secret: string,
 ): Promise<AResponse> => {
     try {
-        const token = await verify_token(db, refresh_token, refresh_token_secret);
+        const token = await verify_token(
+            db,
+            refresh_token,
+            refresh_token_secret,
+        );
         if (!token || token.type !== "refresh") {
             return {
                 success: false,
@@ -186,7 +196,11 @@ const logout = async (
     refresh_token_secret: string,
 ): Promise<AResponse> => {
     try {
-        const token = await verify_token(db, refresh_token, refresh_token_secret);
+        const token = await verify_token(
+            db,
+            refresh_token,
+            refresh_token_secret,
+        );
         if (!token || token.type !== "refresh") {
             return {
                 success: true,
@@ -218,4 +232,49 @@ const logout = async (
     }
 };
 
-export { signup, login, refresh, logout };
+const forgot = async (
+    db: D1Database,
+    data: ForgotBody,
+    resend_api_key: string,
+): Promise<AResponse> => {
+    const user = await check_user_exists(db, data.email);
+
+    if (!user) {
+        return {
+            success: true,
+            message: "A reset link has been sent to your email",
+            data: null,
+            error: null,
+            code: 200,
+        };
+    }
+
+    const { token } = await generate_reset_token(db, user.id);
+
+    const email_payload = {
+        to: user.email,
+        url: `http://localhost:3000/reset/${token}`,
+    };
+
+    try {
+        await send_email(resend_api_key, email_payload, "reset");
+        return {
+            success: true,
+            message: "A reset link has been sent to your email",
+            data: null,
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            code: 500,
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            message: "Internal Server Error",
+            success: false,
+        };
+    }
+};
+
+export { signup, login, refresh, logout, forgot };

@@ -1,18 +1,19 @@
 import { User } from "./types";
 import { token_hash } from "../../utils/jwt";
+import { generateToken, sha256 } from "../../utils/crypto";
 
 const check_user_exists = async (db: D1Database, email: string) => {
-    return await db.prepare(
-        "SELECT * FROM users WHERE email = ?",
-    )
+    return await db
+        .prepare("SELECT * FROM users WHERE email = ?")
         .bind(email)
         .first<User>();
-}
+};
 
 const create_user = async (db: D1Database, data: User) => {
-    return await db.prepare(
-        "INSERT INTO users (id, email, password_hash, name, avatar_url, created_at, updated_at, is_active, email_verified, failed_login_attempts, last_login_at, last_logout_at, last_failed_login_at, locked_at, locked_until) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    )
+    return await db
+        .prepare(
+            "INSERT INTO users (id, email, password_hash, name, avatar_url, created_at, updated_at, is_active, email_verified, failed_login_attempts, last_login_at, last_logout_at, last_failed_login_at, locked_at, locked_until) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        )
         .bind(
             data.id,
             data.email,
@@ -31,15 +32,36 @@ const create_user = async (db: D1Database, data: User) => {
             data.locked_until,
         )
         .run();
-}
+};
 
 const delete_refresh_token = async (db: D1Database, token: string) => {
     const refresh_hash = await token_hash(token);
-    return await db.prepare(
-        "DELETE FROM refresh_tokens WHERE token_hash = ?",
-    )
+    return await db
+        .prepare("DELETE FROM refresh_tokens WHERE token_hash = ?")
         .bind(refresh_hash)
         .run();
-}
+};
 
-export { check_user_exists, create_user, delete_refresh_token }
+const generate_reset_token = async (db: D1Database, user_id: string) => {
+    const token = generateToken();
+    const hash = await sha256(token);
+
+    await db
+        ?.prepare(
+            "INSERT INTO reset_tokens (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)",
+        )
+        .bind(hash, user_id, Date.now(), Date.now() + 1000 * 60 * 30)
+        .run();
+
+    return {
+        token,
+        hash,
+    };
+};
+
+export {
+    check_user_exists,
+    create_user,
+    delete_refresh_token,
+    generate_reset_token,
+};

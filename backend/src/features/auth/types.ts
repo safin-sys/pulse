@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { email, z } from "zod";
 
 export const SignupBodySchema = z.object({
     email: z.email("Invalid email format"),
@@ -15,6 +15,12 @@ export const LoginBodySchema = z.object({
 });
 
 export type LoginBody = z.infer<typeof LoginBodySchema>;
+
+export const ForgotBodySchema = z.object({
+    email: z.email("Invalid email format"),
+});
+
+export type ForgotBody = z.infer<typeof ForgotBodySchema>;
 
 export interface User {
     id: string;

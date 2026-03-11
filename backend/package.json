@@ -6,20 +6,18 @@
     "build": "vite build",
     "preview": "$npm_execpath run build && vite preview",
     "deploy": "$npm_execpath run build && wrangler deploy",
-
     "db:create": "wrangler d1 create DB",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB",
     "db:reset:local": "wrangler d1 execute DB --local --file=./migrations/0001_init.sql",
-
     "dev:cf": "wrangler dev",
     "dev:full": "pnpm db:migrate:local && pnpm dev:cf",
-
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.11.1",
+    "resend": "^6.9.3",
     "zod": "^4.2.1"
   },
   "devDependencies": {

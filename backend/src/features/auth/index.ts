@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { LoginBodySchema, SignupBodySchema } from "./types";
-import { login, logout, refresh, signup } from "./service";
+import { ForgotBodySchema, LoginBodySchema, SignupBodySchema } from "./types";
+import { forgot, login, logout, refresh, signup } from "./service";
 import response from "../../utils/response";
 import { validate } from "../../middleware/validate";
 
@@ -73,6 +73,14 @@ app.post("/logout", async (c) => {
         refresh_token,
         c.env.REFRESH_TOKEN_SECRET,
     );
+
+    return response(c, res);
+});
+
+app.post("/forgot", validate("json", ForgotBodySchema), async (c) => {
+    const data = c.req.valid("json");
+
+    const res = await forgot(c.env.DB, data, c.env.RESEND_API_KEY);
 
     return response(c, res);
 });

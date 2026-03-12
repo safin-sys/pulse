@@ -291,7 +291,6 @@ const reset = async (db: D1Database, data: ResetBody): Promise<AResponse> => {
             success: false,
         };
     }
-    console.log({ exp: reset_token_from_db.expires_at });
 
     const password_hash = await hash(data.new_password);
 

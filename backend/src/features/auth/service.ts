@@ -6,8 +6,10 @@ import {
     create_user,
     delete_refresh_token,
     generate_reset_token,
+    update_with_new_password,
+    validate_reset_token,
 } from "./repository";
-import { ForgotBody, LoginBody, SignupBody, User } from "./types";
+import { ForgotBody, LoginBody, ResetBody, SignupBody, User } from "./types";
 
 const signup = async (
     db: D1Database,
@@ -277,4 +279,29 @@ const forgot = async (
     }
 };
 
-export { signup, login, refresh, logout, forgot };
+const reset = async (db: D1Database, data: ResetBody): Promise<AResponse> => {
+    const reset_token_from_db = await validate_reset_token(db, data.token);
+
+    if (!reset_token_from_db) {
+        return {
+            code: 400,
+            data: null,
+            error: null,
+            message: "Invalid or expired reset token",
+            success: false,
+        };
+    }
+    console.log({ exp: reset_token_from_db.expires_at });
+
+    const password_hash = await hash(data.new_password);
+
+    const update_result = await update_with_new_password(
+        db,
+        reset_token_from_db.user_id,
+        password_hash,
+    );
+
+    return update_result;
+};
+
+export { signup, login, refresh, logout, forgot, reset };

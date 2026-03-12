@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { z } from "zod";
 
 export const SignupBodySchema = z.object({
     email: z.email("Invalid email format"),
@@ -21,6 +21,13 @@ export const ForgotBodySchema = z.object({
 });
 
 export type ForgotBody = z.infer<typeof ForgotBodySchema>;
+
+export const ResetBodySchema = z.object({
+    token: z.string(""),
+    new_password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export type ResetBody = z.infer<typeof ResetBodySchema>;
 
 export interface User {
     id: string;

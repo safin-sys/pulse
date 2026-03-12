@@ -59,9 +59,75 @@ const generate_reset_token = async (db: D1Database, user_id: string) => {
     };
 };
 
+const validate_reset_token = async (db: D1Database, token: string) => {
+    const hash = await sha256(token);
+
+    const { results } = await db
+        ?.prepare("SELECT * FROM reset_tokens WHERE token_hash = ?")
+        .bind(hash)
+        .run();
+
+    if (!results || results.length === 0) {
+        return null;
+    }
+
+    const reset_token = results[0] as {
+        expires_at: number;
+        used_at?: number | null;
+        [key: string]: unknown;
+        id: string;
+        user_id: string;
+        token_hash: string;
+        created_at: number;
+    };
+
+    if (reset_token.expires_at <= Date.now()) {
+        return null;
+    }
+
+    if (reset_token.used_at) {
+        return null;
+    }
+
+    return reset_token;
+};
+
+const update_with_new_password = async (
+    db: D1Database,
+    user_id: string,
+    password_hash: string,
+): Promise<AResponse> => {
+    try {
+        await db
+            .prepare(
+                "UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?",
+            )
+            .bind(password_hash, Date.now(), user_id)
+            .run();
+
+        return {
+            success: true,
+            message: "Password updated successfully",
+            data: null,
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Failed to update password",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 500,
+        };
+    }
+};
+
 export {
     check_user_exists,
     create_user,
     delete_refresh_token,
     generate_reset_token,
+    validate_reset_token,
+    update_with_new_password,
 };

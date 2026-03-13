@@ -63,10 +63,17 @@ const get_projects_by_owner_id = async (
     owner_id: string,
 ): Promise<{ id: string; name: string }[]> => {
     const result = await db
-        .prepare("SELECT id, name FROM projects WHERE owner_id = ?")
+        .prepare("SELECT id, name FROM projects WHERE owner_id = ? AND is_active = true")
         .bind(owner_id)
         .all();
     return result.results as { id: string; name: string }[];
+};
+
+const delete_project = async (db: D1Database, id: string, owner_id: string) => {
+    return await db
+        .prepare("UPDATE projects SET is_active = false, updated_at = ? WHERE id = ? AND owner_id = ?")
+        .bind(Date.now(), id, owner_id)
+        .run();
 };
 
 export {
@@ -74,4 +81,5 @@ export {
     update_project,
     get_project_by_id,
     get_projects_by_owner_id,
+    delete_project,
 };

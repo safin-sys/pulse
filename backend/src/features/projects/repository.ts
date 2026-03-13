@@ -24,7 +24,11 @@ const create_project = async (db: D1Database, data: Project) => {
         .run();
 };
 
-const update_project = async (db: D1Database, id: string, updates: Partial<Project>) => {
+const update_project = async (
+    db: D1Database,
+    id: string,
+    updates: Partial<Project>,
+) => {
     const fields = [];
     const values = [];
     if (updates.name !== undefined) {
@@ -37,12 +41,37 @@ const update_project = async (db: D1Database, id: string, updates: Partial<Proje
     const query = `UPDATE projects SET ${fields.join(", ")} WHERE id = ?`;
     values.push(id);
 
-    return await db.prepare(query).bind(...values).run();
+    return await db
+        .prepare(query)
+        .bind(...values)
+        .run();
 };
 
-const get_project_by_id = async (db: D1Database, id: string): Promise<Project | null> => {
-    const result = await db.prepare("SELECT * FROM projects WHERE id = ?").bind(id).first();
+const get_project_by_id = async (
+    db: D1Database,
+    id: string,
+): Promise<Project | null> => {
+    const result = await db
+        .prepare("SELECT * FROM projects WHERE id = ?")
+        .bind(id)
+        .first();
     return result as Project | null;
 };
 
-export { create_project, update_project, get_project_by_id };
+const get_projects_by_owner_id = async (
+    db: D1Database,
+    owner_id: string,
+): Promise<{ id: string; name: string }[]> => {
+    const result = await db
+        .prepare("SELECT id, name FROM projects WHERE owner_id = ?")
+        .bind(owner_id)
+        .all();
+    return result.results as { id: string; name: string }[];
+};
+
+export {
+    create_project,
+    update_project,
+    get_project_by_id,
+    get_projects_by_owner_id,
+};

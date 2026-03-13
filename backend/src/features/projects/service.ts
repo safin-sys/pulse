@@ -1,6 +1,6 @@
 import { generateToken } from "../../utils/crypto";
 import { CreateProjectBody, UpdateProjectBody, Project } from "./types";
-import { create_project, update_project, get_project_by_id } from "./repository";
+import { create_project, update_project, get_project_by_id, get_projects_by_owner_id } from "./repository";
 
 const create = async (
     db: D1Database,
@@ -100,4 +100,31 @@ const update = async (
     }
 };
 
-export { create, update };
+const getAll = async (
+    db: D1Database,
+    owner_id: string,
+): Promise<AResponse> => {
+    try {
+        const projects = await get_projects_by_owner_id(db, owner_id);
+
+        return {
+            success: true,
+            message: "Projects retrieved successfully",
+            data: {
+                projects,
+            },
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Failed to retrieve projects",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 500,
+        };
+    }
+};
+
+export { create, update, getAll };

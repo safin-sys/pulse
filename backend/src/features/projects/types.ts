@@ -2,10 +2,18 @@ import { z } from "zod";
 
 export const CreateProjectBodySchema = z.object({
     name: z.string().min(1, "Project name is required"),
-    domain: z.string().regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid domain format"),
+    domain: z
+        .string()
+        .regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid domain format"),
 });
 
 export type CreateProjectBody = z.infer<typeof CreateProjectBodySchema>;
+
+export const UpdateProjectBodySchema = z.object({
+    name: z.string().min(1, "Project name is required").optional(),
+});
+
+export type UpdateProjectBody = z.infer<typeof UpdateProjectBodySchema>;
 
 export interface Project {
     id: string;

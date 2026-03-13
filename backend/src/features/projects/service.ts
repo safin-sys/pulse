@@ -1,6 +1,6 @@
 import { generateToken } from "../../utils/crypto";
-import { CreateProjectBody, Project } from "./types";
-import { create_project } from "./repository";
+import { CreateProjectBody, UpdateProjectBody, Project } from "./types";
+import { create_project, update_project, get_project_by_id } from "./repository";
 
 const create = async (
     db: D1Database,
@@ -49,4 +49,55 @@ const create = async (
     }
 };
 
-export { create };
+const update = async (
+    db: D1Database,
+    project_id: string,
+    owner_id: string,
+    data: UpdateProjectBody,
+): Promise<AResponse> => {
+    try {
+        const project = await get_project_by_id(db, project_id);
+        if (!project) {
+            return {
+                success: false,
+                message: "Project not found",
+                data: null,
+                error: null,
+                code: 404,
+            };
+        }
+
+        if (project.owner_id !== owner_id) {
+            return {
+                success: false,
+                message: "Unauthorized to update this project",
+                data: null,
+                error: null,
+                code: 403,
+            };
+        }
+
+        await update_project(db, project_id, data);
+        return {
+            success: true,
+            message: "Project updated successfully",
+            data: {
+                project: {
+                    name: project.name,
+                },
+            },
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Failed to update project",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 500,
+        };
+    }
+};
+
+export { create, update };

@@ -24,4 +24,25 @@ const create_project = async (db: D1Database, data: Project) => {
         .run();
 };
 
-export { create_project };
+const update_project = async (db: D1Database, id: string, updates: Partial<Project>) => {
+    const fields = [];
+    const values = [];
+    if (updates.name !== undefined) {
+        fields.push("name = ?");
+        values.push(updates.name);
+    }
+    fields.push("updated_at = ?");
+    values.push(Date.now());
+
+    const query = `UPDATE projects SET ${fields.join(", ")} WHERE id = ?`;
+    values.push(id);
+
+    return await db.prepare(query).bind(...values).run();
+};
+
+const get_project_by_id = async (db: D1Database, id: string): Promise<Project | null> => {
+    const result = await db.prepare("SELECT * FROM projects WHERE id = ?").bind(id).first();
+    return result as Project | null;
+};
+
+export { create_project, update_project, get_project_by_id };

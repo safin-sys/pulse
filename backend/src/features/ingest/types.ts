@@ -1,0 +1,82 @@
+const payload = {
+    apiKey: "API_KEY",
+    context: {
+        userAgent:
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+        language: "en-GB",
+        screen: "1920x1080",
+        hostname: "localhost",
+    },
+    events: [
+        {
+            type: "page_view",
+            visitorId: "mmtrqw51qksbmh7c9b",
+            sessionId: "mmtt7etcsc5ij0xfd2e",
+            timestamp: 1773703795020,
+            properties: {
+                path: "/",
+                query: "",
+                title: "Analytics SDK Test",
+                referrer: "",
+            },
+        },
+        {
+            type: "click",
+            visitorId: "mmtrqw51qksbmh7c9b",
+            sessionId: "mmtt7etcsc5ij0xfd2e",
+            timestamp: 1773703798178,
+            properties: {
+                tagName: "a",
+                id: "link-1",
+                className: "",
+                text: "Click Me (Link)",
+                href: "http://localhost:3000/#",
+                path: "/",
+                query: "",
+                title: "Analytics SDK Test",
+            },
+        },
+        {
+            type: "page_view",
+            visitorId: "mmtrqw51qksbmh7c9b",
+            sessionId: "mmtt7etcsc5ij0xfd2e",
+            timestamp: 1773703798178,
+            properties: {
+                path: "/",
+                query: "",
+                title: "Analytics SDK Test",
+                referrer: "",
+            },
+        },
+        {
+            type: "click",
+            visitorId: "mmtrqw51qksbmh7c9b",
+            sessionId: "mmtt7etcsc5ij0xfd2e",
+            timestamp: 1773703799344,
+            properties: {
+                tagName: "button",
+                id: "",
+                className: "nested",
+                text: "Nested Button",
+                path: "/",
+                query: "",
+                title: "Analytics SDK Test",
+            },
+        },
+        {
+            type: "click",
+            visitorId: "mmtrqw51qksbmh7c9b",
+            sessionId: "mmtt7etcsc5ij0xfd2e",
+            timestamp: 1773703800019,
+            properties: {
+                tagName: "button",
+                id: "btn-1",
+                className: "",
+                text: "Click Me (Button)",
+                path: "/",
+                query: "",
+                title: "Analytics SDK Test",
+            },
+        },
+    ],
+};

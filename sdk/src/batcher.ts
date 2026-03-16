@@ -4,6 +4,14 @@ export interface BatcherConfig {
     apiKey: string;
     batchSize?: number;
     timeout?: number;
+    context: BatchContext;
+}
+
+export interface BatchContext {
+    userAgent: string;
+    language: string;
+    screen: string;
+    hostname: string;
 }
 
 export interface AnalyticsEvent {
@@ -11,8 +19,9 @@ export interface AnalyticsEvent {
 }
 
 export interface BatchPayload {
-    events: AnalyticsEvent[];
     apiKey: string;
+    context: BatchContext;
+    events: AnalyticsEvent[];
 }
 
 export interface Batcher {
@@ -39,8 +48,9 @@ export const createBatcher = (props: BatcherConfig): Batcher => {
         if (queue.length === 0) return;
 
         const payload: BatchPayload = {
-            events: [...queue],
             apiKey: config.apiKey,
+            context: config.context,
+            events: [...queue],
         };
 
         queue = [];

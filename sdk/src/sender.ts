@@ -1,5 +1,5 @@
 export const sendBatch = async (batch: { events: any[], apiKey: string }) => {
-    const endpoint = "http://localhost:3000/api/collect";
+    const endpoint = "http://localhost:5173/ingest";
     if (batch.events.length === 0) return;
 
     const payload = JSON.stringify(batch);

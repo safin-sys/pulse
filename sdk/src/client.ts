@@ -1,5 +1,5 @@
-import { createBatcher, type BatcherConfig } from './batcher.js';
-import { getVisitorId } from './ids.js';
+import { createBatcher, type BatchContext, type BatcherConfig } from './batcher.js';
+import { getSessionId, getVisitorId } from './ids.js';
 import { track, setupClickTracking } from './tracker.js';
 
 interface AnalyticsOptions {
@@ -8,15 +8,26 @@ interface AnalyticsOptions {
 }
 
 export const analytics = (apiKey: string, options: AnalyticsOptions = {}) => {
-    const batcherOptions: BatcherConfig = { apiKey };
-    if (options.batchSize) batcherOptions.batchSize = options.batchSize;
-    if (options.batchTimeout) batcherOptions.timeout = options.batchTimeout;
+    const context: BatchContext = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screen: `${window.screen.width}x${window.screen.height}`,
+        hostname: window.location.hostname,
+    };
+    
+    const batcherOptions: BatcherConfig = {
+        apiKey,
+        context,
+        ...(options.batchSize && { batchSize: options.batchSize }),
+        ...(options.batchTimeout && { timeout: options.batchTimeout }),
+    };
 
     const batcher = createBatcher(batcherOptions);
 
     const trackerOptions = {
         batcher,
         visitorId: getVisitorId(),
+        sessionId: getSessionId()
     }
 
     // Initial Page View

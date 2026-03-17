@@ -6,9 +6,8 @@ CREATE TABLE projects (
   name TEXT NOT NULL,
   domain TEXT NOT NULL,
  
--- api keys (per project)
-  public_key TEXT NOT NULL UNIQUE,
-  secret_key TEXT NOT NULL UNIQUE,
+-- api key (per project)
+  api_key TEXT NOT NULL UNIQUE,
  
 -- unix timestamps
   created_at INTEGER NOT NULL,

@@ -11,8 +11,9 @@ const get_project = async (
         .first<{ id: string; domain: string }>();
 };
 
-const store_db = async (DB: D1Database, events: EventRow[]) => {
-    const stmt = DB.prepare(`
+const event_insert = async (DB: D1Database, events: EventRow[]) => {
+    // Events
+    const eventStmt = DB.prepare(`
         INSERT INTO events (
             id, project_id, visitor_id, session_id, type,
             timestamp, received_at, path, query, title, referrer,
@@ -28,8 +29,8 @@ const store_db = async (DB: D1Database, events: EventRow[]) => {
         )
     `);
 
-    const batch = events.map((e) =>
-        stmt.bind(
+    const eventBatch = events.map((e) =>
+        eventStmt.bind(
             e.id,
             e.project_id,
             e.visitor_id,
@@ -61,7 +62,9 @@ const store_db = async (DB: D1Database, events: EventRow[]) => {
         ),
     );
 
-    return await DB.batch(batch);
+    return await DB.batch([
+        ...eventBatch
+    ]);
 };
 
-export { get_project, store_db };
+export { get_project, event_insert };

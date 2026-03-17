@@ -1,7 +1,7 @@
 import { UAParser } from "ua-parser-js";
 import { CachedProject, EnrichedBody, EventRow, Payload } from "./types";
 import { Context } from "hono";
-import { get_project, store_db } from "./repository";
+import { get_project, event_insert } from "./repository";
 
 const api_validation = async (
     CACHE_KV: KVNamespace,
@@ -115,7 +115,7 @@ const store = async (
         };
     });
 
-    return await store_db(DB, rows);
+    return await event_insert(DB, rows);
 };
 
 export { api_validation, domain_validation, enrichment, store };

@@ -1,82 +1,74 @@
-const payload = {
-    apiKey: "API_KEY",
-    context: {
-        userAgent:
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-        language: "en-GB",
-        screen: "1920x1080",
-        hostname: "localhost",
-    },
-    events: [
-        {
-            type: "page_view",
-            visitorId: "mmtrqw51qksbmh7c9b",
-            sessionId: "mmtt7etcsc5ij0xfd2e",
-            timestamp: 1773703795020,
-            properties: {
-                path: "/",
-                query: "",
-                title: "Analytics SDK Test",
-                referrer: "",
-            },
-        },
-        {
-            type: "click",
-            visitorId: "mmtrqw51qksbmh7c9b",
-            sessionId: "mmtt7etcsc5ij0xfd2e",
-            timestamp: 1773703798178,
-            properties: {
-                tagName: "a",
-                id: "link-1",
-                className: "",
-                text: "Click Me (Link)",
-                href: "http://localhost:3000/#",
-                path: "/",
-                query: "",
-                title: "Analytics SDK Test",
-            },
-        },
-        {
-            type: "page_view",
-            visitorId: "mmtrqw51qksbmh7c9b",
-            sessionId: "mmtt7etcsc5ij0xfd2e",
-            timestamp: 1773703798178,
-            properties: {
-                path: "/",
-                query: "",
-                title: "Analytics SDK Test",
-                referrer: "",
-            },
-        },
-        {
-            type: "click",
-            visitorId: "mmtrqw51qksbmh7c9b",
-            sessionId: "mmtt7etcsc5ij0xfd2e",
-            timestamp: 1773703799344,
-            properties: {
-                tagName: "button",
-                id: "",
-                className: "nested",
-                text: "Nested Button",
-                path: "/",
-                query: "",
-                title: "Analytics SDK Test",
-            },
-        },
-        {
-            type: "click",
-            visitorId: "mmtrqw51qksbmh7c9b",
-            sessionId: "mmtt7etcsc5ij0xfd2e",
-            timestamp: 1773703800019,
-            properties: {
-                tagName: "button",
-                id: "btn-1",
-                className: "",
-                text: "Click Me (Button)",
-                path: "/",
-                query: "",
-                title: "Analytics SDK Test",
-            },
-        },
-    ],
-};
+import { z } from "zod";
+
+export const PayloadSchema = z.object({
+    apiKey: z.string(),
+    context: z.object({
+        userAgent: z.string(),
+        language: z.string(),
+        screen: z.string(),
+        hostname: z.string(),
+    }),
+    events: z
+        .array(
+            z.object({
+                type: z.string(),
+                visitorId: z.string(),
+                sessionId: z.string(),
+                timestamp: z.number(),
+                properties: z.record(z.string(), z.unknown()),
+            }),
+        )
+        .min(1),
+});
+
+export type Payload = z.infer<typeof PayloadSchema>;
+
+export interface CachedProject {
+    projectId: string;
+    domain: string;
+}
+
+export interface EnrichedBody {
+    country: string | null;
+    city: string | null;
+    timezone: string | null;
+    region: string | null;
+    browser: string | null;
+    os: string | null;
+    device: string | "desktop";
+    org: string | null;
+    lat: string | 0;
+    lng: string | 0;
+    ip: string | null;
+}
+
+export interface EventRow {
+    id: string;
+    project_id: string;
+    visitor_id: string;
+    session_id: string;
+    type: string;
+    timestamp: number;
+    received_at: number;
+    path: {} | null;
+    query: {} | null;
+    title: {} | null;
+    referrer: {} | null;
+    tag_name: {} | null;
+    element_id: {} | null;
+    class_name: {} | null;
+    text: {} | null;
+    href: {} | null;
+    user_agent: string;
+    browser: string | null;
+    os: string | null;
+    device: string;
+    language: string;
+    screen: string;
+    hostname: string;
+    country: string | null;
+    city: string | null;
+    region: string | null;
+    timezone: string | null;
+    ip: string | null;
+}[]

@@ -9,5 +9,11 @@
 			"database_name": "DB",
 			"database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a"
 		}
-	]
+	],
+	"kv_namespaces": [
+    {
+      "binding": "CACHE_KV",
+      "id": "53ca7219ba1f4d92afd9a4e879b1a570"
+    }
+  ]
 }

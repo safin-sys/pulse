@@ -22,8 +22,7 @@ export interface Project {
     name: string;
     domain: string;
     // api keys
-    public_key: string;
-    secret_key: string;
+    api_key: string;
     // unix timestamps
     created_at: number;
     updated_at: number;

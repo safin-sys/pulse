@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import response from "../../utils/response";
 import { verify } from "hono/jwt";
-import { DashboardQueryParams } from "./types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 

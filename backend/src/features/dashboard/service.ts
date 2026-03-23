@@ -72,7 +72,6 @@ const get_dashboard = async (
         view: "country",
         rows: [
             {
-                country: "/",
                 countryCode: "BD",
                 visitors: 0,
             },

@@ -110,7 +110,6 @@ export interface SourcesBlock {
 
 // locations
 export interface CountryRow {
-    country: string;
     countryCode: string;
     visitors: number;
 }
@@ -123,6 +122,7 @@ export interface RegionRow {
 
 export interface CityRow {
     city: string;
+    region: string;
     countryCode: string;
     visitors: number;
 }

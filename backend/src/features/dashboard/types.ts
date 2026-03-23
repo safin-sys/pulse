@@ -72,14 +72,14 @@ export type DashboardFilters = z.infer<typeof DashboardFiltersSchema>;
 // Response types (no Zod needed — these are outbound shapes)
 
 export interface SummaryBlock {
-    pageviews: number;
+    entries: number;
     visitors: number;
     sessions: number;
 }
 
 export interface ChartPoint {
     date: string;
-    pageviews: number;
+    entries: number;
     visitors: number;
     sessions: number;
 }
@@ -87,26 +87,20 @@ export interface ChartPoint {
 // pages
 export interface PageRow {
     path: string;
-    pageviews: number;
-    visitors: number;
-}
-
-export interface EnteredPageRow {
-    path: string;
     entries: number;
     visitors: number;
 }
 
 export interface PagesBlock {
     view: PageView;
-    rows: PageRow[] | EnteredPageRow[];
+    rows: PageRow[];
 }
 
 // sources
 export interface ReferrerRow {
     referrer: string;
     visitors: number;
-    pageviews: number;
+    entries: number;
 }
 
 export interface SourcesBlock {
@@ -123,15 +117,12 @@ export interface CountryRow {
 
 export interface RegionRow {
     region: string;
-    country: string;
     countryCode: string;
     visitors: number;
 }
 
 export interface CityRow {
     city: string;
-    region: string;
-    country: string;
     countryCode: string;
     visitors: number;
 }

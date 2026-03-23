@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import response from "../../utils/response";
 import { verify } from "hono/jwt";
+import { get_dashboard } from "./service";
+import { DashboardQueryParams, DashboardQueryParamsSchema } from "./types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -24,45 +26,32 @@ app.get("/:domain", async (c) => {
             role: string;
         };
 
+        // query params and shit
         const { domain } = c.req.param();
-        const {
-            range,
-            pageView,
-            sourceView,
-            deviceView,
-            locationView,
-            hostname,
-            page,
-            referrer,
-            country,
-            device,
-            browser,
-            os,
-        } = c.req.query();
+        const params_result = DashboardQueryParamsSchema.safeParse(
+            c.req.query(),
+        );
 
-        const params = {
-            range,
+        if (!params_result.success) {
+            return response(c, {
+                success: false,
+                message: "Invalid query params",
+                data: null,
+                error: params_result.error.message ?? "Unknown error",
+                code: 400,
+            });
+        }
 
-            // section filters
-            pageView,
-            sourceView,
-            deviceView,
-            locationView,
+        const params = params_result.data;
 
-            // global filters
-            hostname,
-            page,
-            referrer,
-            country,
-            device,
-            browser,
-            os,
-        };
+        // get the actual dashboard data
+        // da real shmeat of the func
+        const dashboard = await get_dashboard(domain, params);
 
         return response(c, {
             success: true,
             message: "",
-            data: { domain, ...params },
+            data: dashboard,
             error: null,
             code: 200,
         });

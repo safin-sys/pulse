@@ -46,11 +46,11 @@ app.get("/:domain", async (c) => {
 
         // get the actual dashboard data
         // da real shmeat of the func
-        const dashboard = await get_dashboard(domain, params);
+        const dashboard = await get_dashboard(c.env.DB, domain, params);
 
         return response(c, {
             success: true,
-            message: "",
+            message: "Dashboard successfully received",
             data: dashboard,
             error: null,
             code: 200,

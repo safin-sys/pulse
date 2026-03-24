@@ -134,7 +134,11 @@ const rollup_tables_insert = async (DB: D1Database, events: EventRow[]) => {
     `);
 
     for (const e of pageViews) {
-        const date = new Date(e.timestamp).toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const drift = Math.abs(e.timestamp - e.received_at);
+        const timestamp =
+            drift > 24 * 60 * 60 * 1000 ? e.received_at : e.timestamp;
+
+        const date = new Date(timestamp).toISOString().slice(0, 10);
         const pid = e.project_id;
 
         // Ensure the daily_stats row exists first

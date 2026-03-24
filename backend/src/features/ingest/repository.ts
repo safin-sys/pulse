@@ -62,9 +62,104 @@ const event_insert = async (DB: D1Database, events: EventRow[]) => {
         ),
     );
 
-    return await DB.batch([
-        ...eventBatch
-    ]);
+    return await DB.batch([...eventBatch]);
 };
 
-export { get_project, event_insert };
+const rollup_tables_insert = async (DB: D1Database, events: EventRow[]) => {
+    const pageViews = events.filter((e) => e.type === "page_view");
+    if (pageViews.length === 0) return;
+
+    const stmts: D1PreparedStatement[] = [];
+
+    // Prepared statements (defined once, bound per event)
+    const statsEnsure = DB.prepare(`
+        INSERT INTO daily_stats (project_id, date, pageviews, sessions, visitors)
+        VALUES (?, ?, 0, 0, 0)
+        ON CONFLICT (project_id, date) DO NOTHING
+    `);
+
+    const statsPageview = DB.prepare(`
+        UPDATE daily_stats SET pageviews = pageviews + 1
+        WHERE project_id = ? AND date = ?
+    `);
+
+    const sessionDedup = DB.prepare(`
+        INSERT OR IGNORE INTO daily_sessions (project_id, date, session_id)
+        VALUES (?, ?, ?)
+    `);
+
+    const statsSession = DB.prepare(`
+        UPDATE daily_stats SET sessions = sessions + 1
+        WHERE project_id = ? AND date = ? AND (SELECT changes()) = 1
+    `);
+
+    const visitorDedup = DB.prepare(`
+        INSERT OR IGNORE INTO daily_visitors (project_id, date, visitor_id)
+        VALUES (?, ?, ?)
+    `);
+
+    const statsVisitor = DB.prepare(`
+        UPDATE daily_stats SET visitors = visitors + 1
+        WHERE project_id = ? AND date = ? AND (SELECT changes()) = 1
+    `);
+
+    const pageUpsert = DB.prepare(`
+        INSERT INTO daily_pages (project_id, date, path, pageviews)
+        VALUES (?, ?, ?, 1)
+        ON CONFLICT (project_id, date, path) DO UPDATE SET pageviews = pageviews + 1
+    `);
+
+    const referrerUpsert = DB.prepare(`
+        INSERT INTO daily_referrers (project_id, date, referrer, count)
+        VALUES (?, ?, ?, 1)
+        ON CONFLICT (project_id, date, referrer) DO UPDATE SET count = count + 1
+    `);
+
+    const countryUpsert = DB.prepare(`
+        INSERT INTO daily_countries (project_id, date, country, count)
+        VALUES (?, ?, ?, 1)
+        ON CONFLICT (project_id, date, country) DO UPDATE SET count = count + 1
+    `);
+
+    const browserUpsert = DB.prepare(`
+        INSERT INTO daily_browsers (project_id, date, browser, count)
+        VALUES (?, ?, ?, 1)
+        ON CONFLICT (project_id, date, browser) DO UPDATE SET count = count + 1
+    `);
+
+    const deviceUpsert = DB.prepare(`
+        INSERT INTO daily_devices (project_id, date, device, count)
+        VALUES (?, ?, ?, 1)
+        ON CONFLICT (project_id, date, device) DO UPDATE SET count = count + 1
+    `);
+
+    for (const e of pageViews) {
+        const date = new Date(e.timestamp).toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const pid = e.project_id;
+
+        // Ensure the daily_stats row exists first
+        stmts.push(statsEnsure.bind(pid, date));
+
+        // Pageview increment
+        stmts.push(statsPageview.bind(pid, date));
+
+        // Session dedup → conditional increment
+        stmts.push(sessionDedup.bind(pid, date, e.session_id));
+        stmts.push(statsSession.bind(pid, date));
+
+        // Visitor dedup → conditional increment
+        stmts.push(visitorDedup.bind(pid, date, e.visitor_id));
+        stmts.push(statsVisitor.bind(pid, date));
+
+        // Dimension tables
+        if (e.path) stmts.push(pageUpsert.bind(pid, date, e.path));
+        if (e.referrer) stmts.push(referrerUpsert.bind(pid, date, e.referrer));
+        if (e.country) stmts.push(countryUpsert.bind(pid, date, e.country));
+        if (e.browser) stmts.push(browserUpsert.bind(pid, date, e.browser));
+        if (e.device) stmts.push(deviceUpsert.bind(pid, date, e.device));
+    }
+
+    await DB.batch(stmts);
+};
+
+export { get_project, event_insert, rollup_tables_insert };

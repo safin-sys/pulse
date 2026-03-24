@@ -43,12 +43,11 @@ app.post("/", validate("json", PayloadSchema), async (c) => {
     const enriched = enrichment(c, payload.context.userAgent);
 
     // DB
-    await store(c.env.DB, {
+    await store(c, {
         enriched,
         payload,
         project: api_validation_result.data,
     });
-
     return response(c, {
         success: true,
         message: "Batch received succesfully",

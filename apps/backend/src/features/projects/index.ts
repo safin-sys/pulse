@@ -25,6 +25,7 @@ app.post("/", validate("json", CreateProjectBodySchema), async (c) => {
         const payload = (await verify(
             token,
             c.env.ACCESS_TOKEN_SECRET,
+            "HS256"
         )) as unknown as {
             id: string;
             role: string;
@@ -67,6 +68,7 @@ app.patch(
             const payload = (await verify(
                 token,
                 c.env.ACCESS_TOKEN_SECRET,
+                "HS256"
             )) as unknown as {
                 id: string;
                 role: string;
@@ -108,6 +110,7 @@ app.get("/", async (c) => {
         const payload = (await verify(
             token,
             c.env.ACCESS_TOKEN_SECRET,
+            "HS256"
         )) as unknown as {
             id: string;
             role: string;
@@ -145,6 +148,7 @@ app.delete("/:projectId", async (c) => {
         const payload = (await verify(
             token,
             c.env.ACCESS_TOKEN_SECRET,
+            "HS256"
         )) as unknown as {
             id: string;
             role: string;

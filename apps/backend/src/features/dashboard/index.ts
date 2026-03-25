@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import response from "../../utils/response";
 import { verify } from "hono/jwt";
 import { get_dashboard } from "./service";
-import { DashboardQueryParams, DashboardQueryParamsSchema } from "./types";
+import { DashboardQueryParamsSchema } from "./types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -21,7 +21,7 @@ app.get("/:domain", async (c) => {
     }
 
     try {
-        (await verify(token, c.env.ACCESS_TOKEN_SECRET)) as unknown as {
+        (await verify(token, c.env.ACCESS_TOKEN_SECRET, "HS256")) as unknown as {
             id: string;
             role: string;
         };

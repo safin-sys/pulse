@@ -77,7 +77,7 @@ const verify_token = async (db: D1Database, token: string, secret: string) => {
         return null;
     }
 
-    return (await verify(token, secret)) as JWTPayload;
+    return (await verify(token, secret, "HS256")) as JWTPayload;
 };
 
 export { generate_token, token_hash, verify_token };

@@ -1,12 +1,13 @@
 {
-  "name": "sdk",
+  "name": "@pulse/sdk",
   "description": "",
   "version": "0.0.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "build:watch": "tsup --watch"
   },
   "keywords": [
     "Analytics"

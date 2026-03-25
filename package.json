@@ -1,12 +1,22 @@
 {
-  "name": "analytics-tracker",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+    "name": "analytics-tracker",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "dev:backend": "bun run --filter @pulse/backend dev",
+		"dev:sdk": "bun run --filter @pulse/sdk build:watch",
+        "build": "turbo build",
+        "typecheck": "turbo typecheck"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "turbo": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    }
 }

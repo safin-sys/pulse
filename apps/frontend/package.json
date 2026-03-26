@@ -13,6 +13,10 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},
+	"dependencies": {
+		"@pulse/backend": "workspace:*",
+		"hono": "4.11.1"
+	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.3",
 		"@eslint/js": "^10.0.1",

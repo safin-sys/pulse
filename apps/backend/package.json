@@ -28,5 +28,8 @@
         "vite": "^6.3.5",
         "vite-ssr-components": "^0.5.1",
         "wrangler": "^4.17.0"
+    },
+    "exports": {
+        ".": "./src/index.ts"
     }
 }

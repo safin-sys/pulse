@@ -9,9 +9,8 @@ import {
     store,
 } from "./service";
 
-const app = new Hono<{ Bindings: Bindings }>();
-
-app.post("/", validate("json", PayloadSchema), async (c) => {
+const app = new Hono<{ Bindings: Bindings }>()
+.post("/", validate("json", PayloadSchema), async (c) => {
     const payload = c.req.valid("json");
 
     // API KEY VALIDATION

@@ -4,9 +4,8 @@ import { forgot, login, logout, refresh, reset, signup } from "./service";
 import response from "../../utils/response";
 import { validate } from "../../middleware/validate";
 
-const app = new Hono<{ Bindings: Bindings }>();
-
-app.post("/signup", validate("json", SignupBodySchema), async (c) => {
+const app = new Hono<{ Bindings: Bindings }>()
+.post("/signup", validate("json", SignupBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await signup(
@@ -17,9 +16,8 @@ app.post("/signup", validate("json", SignupBodySchema), async (c) => {
     );
 
     return response(c, res);
-});
-
-app.post("/login", validate("json", LoginBodySchema), async (c) => {
+})
+.post("/login", validate("json", LoginBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await login(
@@ -30,9 +28,8 @@ app.post("/login", validate("json", LoginBodySchema), async (c) => {
     );
 
     return response(c, res);
-});
-
-app.post("/refresh", async (c) => {
+})
+.post("/refresh", async (c) => {
     const refresh_token = c.req.header("Authorization")?.split(" ")[1];
 
     if (!refresh_token) {
@@ -53,9 +50,8 @@ app.post("/refresh", async (c) => {
     );
 
     return response(c, res);
-});
-
-app.post("/logout", async (c) => {
+})
+.post("/logout", async (c) => {
     const refresh_token = c.req.header("Authorization")?.split(" ")[1];
 
     if (!refresh_token) {
@@ -75,17 +71,15 @@ app.post("/logout", async (c) => {
     );
 
     return response(c, res);
-});
-
-app.post("/forgot", validate("json", ForgotBodySchema), async (c) => {
+})
+.post("/forgot", validate("json", ForgotBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await forgot(c.env.DB, data, c.env.RESEND_API_KEY);
 
     return response(c, res);
-});
-
-app.post("/reset", validate("json", ResetBodySchema), async (c) => {
+})
+.post("/reset", validate("json", ResetBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await reset(c.env.DB, data);

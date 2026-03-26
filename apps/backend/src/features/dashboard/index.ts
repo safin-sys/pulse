@@ -4,9 +4,8 @@ import { verify } from "hono/jwt";
 import { get_dashboard } from "./service";
 import { DashboardQueryParamsSchema } from "./types";
 
-const app = new Hono<{ Bindings: Bindings }>();
-
-app.get("/:domain", async (c) => {
+const app = new Hono<{ Bindings: Bindings }>()
+.get("/:domain", async (c) => {
     const authHeader = c.req.header("Authorization");
     const token = authHeader?.split(" ")[1];
 

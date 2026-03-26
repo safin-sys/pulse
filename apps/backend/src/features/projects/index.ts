@@ -5,9 +5,8 @@ import { validate } from "../../middleware/validate";
 import { CreateProjectBodySchema, UpdateProjectBodySchema } from "./types";
 import { create, update, getAll, deleteOne } from "./service";
 
-const app = new Hono<{ Bindings: Bindings }>();
-
-app.post("/", validate("json", CreateProjectBodySchema), async (c) => {
+const app = new Hono<{ Bindings: Bindings }>()
+.post("/", validate("json", CreateProjectBodySchema), async (c) => {
     const authHeader = c.req.header("Authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -45,9 +44,8 @@ app.post("/", validate("json", CreateProjectBodySchema), async (c) => {
             code: 401,
         });
     }
-});
-
-app.patch(
+})
+.patch(
     "/:projectId",
     validate("json", UpdateProjectBodySchema),
     async (c) => {
@@ -90,9 +88,8 @@ app.patch(
             });
         }
     },
-);
-
-app.get("/", async (c) => {
+)
+.get("/", async (c) => {
     const authHeader = c.req.header("Authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -128,9 +125,8 @@ app.get("/", async (c) => {
             code: 401,
         });
     }
-});
-
-app.delete("/:projectId", async (c) => {
+})
+.delete("/:projectId", async (c) => {
     const authHeader = c.req.header("Authorization");
     const token = authHeader?.split(" ")[1];
 

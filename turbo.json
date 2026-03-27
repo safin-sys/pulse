@@ -9,10 +9,6 @@
             "persistent": true,
             "cache": false
         },
-        "build:watch": {
-            "persistent": true,
-            "cache": false
-        },
         "typecheck": {
             "dependsOn": ["^build"]
         }

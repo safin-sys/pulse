@@ -1,22 +1,24 @@
 {
-  "name": "@pulse/sdk",
-  "description": "",
-  "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsup",
-    "build:watch": "tsup --watch"
-  },
-  "keywords": [
-    "Analytics"
-  ],
-  "author": "safin-sys",
-  "license": "ISC",
-  "type": "module",
-  "devDependencies": {
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
-  }
+    "name": "@pulse/sdk",
+    "description": "",
+    "version": "0.0.1",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup && cp dist/index.js ../frontend/static/sdk.js"
+    },
+    "keywords": [
+        "Analytics"
+    ],
+    "author": "safin-sys",
+    "license": "ISC",
+    "type": "module",
+    "devDependencies": {
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3"
+    },
+    "exports": {
+        ".": "./src/index.ts"
+    }
 }

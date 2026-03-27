@@ -7,7 +7,7 @@ interface AnalyticsOptions {
     batchTimeout?: number;
 }
 
-export const analytics = (apiKey: string, options: AnalyticsOptions = {}) => {
+export const pulse = (apiKey: string, options: AnalyticsOptions = {}) => {
     const context: BatchContext = {
         userAgent: navigator.userAgent,
         language: navigator.language,

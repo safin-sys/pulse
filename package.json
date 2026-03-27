@@ -1,5 +1,5 @@
 {
-    "name": "analytics-tracker",
+    "name": "pulse",
     "module": "index.ts",
     "type": "module",
     "private": true,
@@ -10,7 +10,7 @@
     "scripts": {
         "dev:frontend": "cd apps/frontend && bun dev",
         "dev:backend": "cd apps/backend && bun dev",
-        "dev:sdk": "bun run --filter @pulse/sdk build:watch",
+        "build:sdk": "cd apps/sdk && bun run build",
         "build": "turbo build",
         "typecheck": "turbo typecheck"
     },

@@ -1,4 +1,4 @@
-# analytics-tracker
+# pulse
 
 To install dependencies:
 

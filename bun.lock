@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "analytics-tracker",
+      "name": "pulse",
       "devDependencies": {
         "@types/bun": "latest",
         "turbo": "latest",

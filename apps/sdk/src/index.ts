@@ -1,1 +1,1 @@
-export { analytics } from './client.js';
+export { pulse } from './client.js';

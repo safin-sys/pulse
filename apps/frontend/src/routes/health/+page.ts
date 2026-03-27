@@ -1,5 +1,9 @@
 import { health } from '$lib/api';
 
 export const load = async () => {
-    return await health.check();
+	try {
+		return await health.check();
+	} catch (error) {
+		return { error: error instanceof Error ? error.message : 'Unknown error' };
+	}
 };

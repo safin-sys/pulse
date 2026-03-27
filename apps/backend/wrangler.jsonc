@@ -3,6 +3,14 @@
 	"name": "api",
 	"compatibility_date": "2025-08-03",
 	"main": "./src/index.ts",
+	"env": {
+        "prod": {
+            "name": "api"
+        },
+        "dev": {
+            "name": "dev"
+        }
+    },
 	"d1_databases": [
 		{
 			"binding": "DB",

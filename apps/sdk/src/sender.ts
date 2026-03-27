@@ -1,5 +1,5 @@
 export const sendBatch = async (batch: { events: any[], apiKey: string }) => {
-    const endpoint = "http://localhost:5173/ingest";
+    const endpoint = `https://dev.pulsed.workers.dev/ingest`;
     if (batch.events.length === 0) return;
 
     const payload = JSON.stringify(batch);

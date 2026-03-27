@@ -1,5 +1,5 @@
 ENVIRONMENT=DEVELOPMENT
 ACCESS_TOKEN_SECRET=your_access_token_secret_here
 REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
-RESEND_API_KEY=re_send
-API_URL=https://api.pulsed.workers.dev/
+RESEND_API_KEY=re_NGVhDZvN_HRLjdVrodM3ybCLhfzeojD2R
+API_URL=https://dev.pulsed.workers.dev/

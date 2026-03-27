@@ -5,6 +5,7 @@ type Bindings = {
     ACCESS_TOKEN_SECRET: string
     REFRESH_TOKEN_SECRET: string
     RESEND_API_KEY: string
+    API_URL: string
 }
 
 interface AResponse {

@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { ForgotBodySchema, LoginBodySchema, ResetBodySchema, SignupBodySchema } from "./types";
 import { forgot, login, logout, refresh, reset, signup } from "./service";
 import response from "../../utils/response";
-import { validate } from "../../middleware/validate";
+import { zValidator } from "@hono/zod-validator";
+import { getCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: Bindings }>()
-.post("/signup", validate("json", SignupBodySchema), async (c) => {
+.post("/signup", zValidator("json", SignupBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await signup(
@@ -17,7 +18,7 @@ const app = new Hono<{ Bindings: Bindings }>()
 
     return response(c, res);
 })
-.post("/login", validate("json", LoginBodySchema), async (c) => {
+.post("/login", zValidator("json", LoginBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await login(
@@ -30,7 +31,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     return response(c, res);
 })
 .post("/refresh", async (c) => {
-    const refresh_token = c.req.header("Authorization")?.split(" ")[1];
+    const refresh_token = getCookie(c, "refresh_token");
 
     if (!refresh_token) {
         return response(c, {
@@ -52,7 +53,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     return response(c, res);
 })
 .post("/logout", async (c) => {
-    const refresh_token = c.req.header("Authorization")?.split(" ")[1];
+    const refresh_token = getCookie(c, "refresh_token");
 
     if (!refresh_token) {
         return response(c, {
@@ -72,14 +73,14 @@ const app = new Hono<{ Bindings: Bindings }>()
 
     return response(c, res);
 })
-.post("/forgot", validate("json", ForgotBodySchema), async (c) => {
+.post("/forgot", zValidator("json", ForgotBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await forgot(c.env.DB, data, c.env.RESEND_API_KEY, c.env.API_URL);
 
     return response(c, res);
 })
-.post("/reset", validate("json", ResetBodySchema), async (c) => {
+.post("/reset", zValidator("json", ResetBodySchema), async (c) => {
     const data = c.req.valid("json");
 
     const res = await reset(c.env.DB, data);

@@ -3,11 +3,11 @@ import response from "../../utils/response";
 import { verify } from "hono/jwt";
 import { get_dashboard } from "./service";
 import { DashboardQueryParamsSchema } from "./types";
+import { getCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: Bindings }>()
 .get("/:domain", async (c) => {
-    const authHeader = c.req.header("Authorization");
-    const token = authHeader?.split(" ")[1];
+    const token = getCookie(c, "access_token");
 
     if (!token) {
         return response(c, {

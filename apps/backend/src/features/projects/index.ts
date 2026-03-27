@@ -1,14 +1,14 @@
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import response from "../../utils/response";
-import { validate } from "../../middleware/validate";
 import { CreateProjectBodySchema, UpdateProjectBodySchema } from "./types";
 import { create, update, getAll, deleteOne } from "./service";
+import { zValidator } from "@hono/zod-validator";
+import { getCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: Bindings }>()
-.post("/", validate("json", CreateProjectBodySchema), async (c) => {
-    const authHeader = c.req.header("Authorization");
-    const token = authHeader?.split(" ")[1];
+.post("/", zValidator("json", CreateProjectBodySchema), async (c) => {
+    const token = getCookie(c, "access_token");
 
     if (!token) {
         return response(c, {
@@ -47,10 +47,9 @@ const app = new Hono<{ Bindings: Bindings }>()
 })
 .patch(
     "/:projectId",
-    validate("json", UpdateProjectBodySchema),
+    zValidator("json", UpdateProjectBodySchema),
     async (c) => {
-        const authHeader = c.req.header("Authorization");
-        const token = authHeader?.split(" ")[1];
+        const token = getCookie(c, "access_token");
 
         if (!token) {
             return response(c, {
@@ -90,8 +89,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     },
 )
 .get("/", async (c) => {
-    const authHeader = c.req.header("Authorization");
-    const token = authHeader?.split(" ")[1];
+    const token = getCookie(c, "access_token");
 
     if (!token) {
         return response(c, {
@@ -127,8 +125,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     }
 })
 .delete("/:projectId", async (c) => {
-    const authHeader = c.req.header("Authorization");
-    const token = authHeader?.split(" ")[1];
+    const token = getCookie(c, "access_token");
 
     if (!token) {
         return response(c, {

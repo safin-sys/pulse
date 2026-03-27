@@ -6,8 +6,19 @@ import ingest from "./features/ingest";
 import dashboard from "./features/dashboard";
 import response from "./utils/response";
 import { ZodError } from "zod";
+import { cors } from "hono/cors";
 
 const app = new Hono();
+
+app.use(
+    "*",
+    cors({
+        origin: ["https://pulsed.pages.dev", "https://pulsedev.pages.dev/","http://localhost:3000"],
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    }),
+);
 
 const routes = app
     .route("/auth", auth)
@@ -33,6 +44,6 @@ const routes = app
             code: 500,
         });
     });
-    
+
 export default app;
 export type AppType = typeof routes;

@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { validate } from "../../middleware/validate";
 import { PayloadSchema } from "./types";
 import response from "../../utils/response";
 import {
@@ -8,9 +7,10 @@ import {
     enrichment,
     store,
 } from "./service";
+import { zValidator } from "@hono/zod-validator";
 
 const app = new Hono<{ Bindings: Bindings }>()
-.post("/", validate("json", PayloadSchema), async (c) => {
+.post("/", zValidator("json", PayloadSchema), async (c) => {
     const payload = c.req.valid("json");
 
     // API KEY VALIDATION

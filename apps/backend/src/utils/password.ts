@@ -14,7 +14,7 @@ const hash = async (password: string): Promise<string> => {
         {
             name: 'PBKDF2',
             salt: salt,
-            iterations: 600000, // OWASP recommendation for PBKDF2-SHA256
+            iterations: 100000, // CF Worker limits -.-
             hash: 'SHA-256'
         },
         keyMaterial,

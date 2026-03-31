@@ -16,7 +16,7 @@ const getDashboard = async (domain: string, query?: {
 }) => {
     const res = await api.dashboard[":domain"].$get({
         param: { domain },
-        ...query
+        query: query ?? {}
     } as any);
     if (res.ok) {
         return { data: await res.json(), error: null };

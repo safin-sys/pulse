@@ -9,7 +9,7 @@
         "db:create": "wrangler d1 create DB",
         "db:drop:local": "wrangler d1 execute DB --local --command=\"DROP TABLE IF EXISTS events; DROP TABLE IF EXISTS daily_stats; DROP TABLE IF EXISTS daily_pages; DROP TABLE IF EXISTS daily_referrers; DROP TABLE IF EXISTS daily_countries; DROP TABLE IF EXISTS daily_browsers; DROP TABLE IF EXISTS daily_devices; DROP TABLE IF EXISTS projects; DROP TABLE IF EXISTS refresh_tokens; DROP TABLE IF EXISTS reset_tokens; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;\"",
         "db:migrate:local": "wrangler d1 migrations apply DB --local",
-        "db:migrate:remote": "wrangler d1 migrations apply DB",
+        "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
         "db:seed:local": "npx tsx src/scripts/seed.ts && wrangler d1 execute DB --local --file=.wrangler/seed/seed.sql",
         "db:fresh:local": "bun db:drop:local && bun db:migrate:local && bun db:seed:local",
         "dev:cf": "wrangler dev",

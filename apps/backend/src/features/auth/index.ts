@@ -3,7 +3,7 @@ import { ForgotBodySchema, LoginBodySchema, ResetBodySchema, SignupBodySchema } 
 import { forgot, login, logout, refresh, reset, signup } from "./service";
 import response from "../../utils/response";
 import { zValidator } from "@hono/zod-validator";
-import { getCookie } from "hono/cookie";
+import { getCookie, setCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: Bindings }>()
 .post("/signup", zValidator("json", SignupBodySchema), async (c) => {
@@ -16,6 +16,24 @@ const app = new Hono<{ Bindings: Bindings }>()
         c.env.REFRESH_TOKEN_SECRET,
     );
 
+    if(res.success) {
+        setCookie(c, "access_token", res.data.access_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 15,
+        });
+        
+        setCookie(c, "refresh_token", res.data.refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+        });
+    }
+      
     return response(c, res);
 })
 .post("/login", zValidator("json", LoginBodySchema), async (c) => {
@@ -27,6 +45,24 @@ const app = new Hono<{ Bindings: Bindings }>()
         c.env.ACCESS_TOKEN_SECRET,
         c.env.REFRESH_TOKEN_SECRET,
     );
+
+    if (res.success) {
+        setCookie(c, "access_token", res.data.access_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 15,
+        });
+
+        setCookie(c, "refresh_token", res.data.refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+        });
+    }
 
     return response(c, res);
 })
@@ -50,6 +86,24 @@ const app = new Hono<{ Bindings: Bindings }>()
         c.env.REFRESH_TOKEN_SECRET,
     );
 
+    if (res.success) {
+        setCookie(c, "access_token", res.data.access_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 15,
+        });
+
+        setCookie(c, "refresh_token", res.data.refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
+        });
+    }
+
     return response(c, res);
 })
 .post("/logout", async (c) => {
@@ -70,6 +124,24 @@ const app = new Hono<{ Bindings: Bindings }>()
         refresh_token,
         c.env.REFRESH_TOKEN_SECRET,
     );
+
+    if (res.success) {
+        setCookie(c, "access_token", "", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 0,
+        });
+
+        setCookie(c, "refresh_token", "", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            path: "/",
+            maxAge: 0,
+        });
+    }
 
     return response(c, res);
 })

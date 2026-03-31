@@ -4,10 +4,3 @@ import { dashboard } from "./dashboard";
 import { health } from "./health";
 
 export { auth, projects, dashboard, health };
-
-export const api = {
-    auth,
-    projects,
-    dashboard,
-    health,
-};

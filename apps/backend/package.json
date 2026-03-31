@@ -11,9 +11,9 @@
         "db:migrate:local": "wrangler d1 migrations apply DB --local",
         "db:migrate:remote": "wrangler d1 migrations apply DB",
         "db:seed:local": "npx tsx src/scripts/seed.ts && wrangler d1 execute DB --local --file=.wrangler/seed/seed.sql",
-        "db:fresh:local": "pnpm db:drop:local && pnpm db:migrate:local && pnpm db:seed:local",
+        "db:fresh:local": "bun db:drop:local && bun db:migrate:local && bun db:seed:local",
         "dev:cf": "wrangler dev",
-        "dev:full": "pnpm db:migrate:local && pnpm dev:cf",
+        "dev:full": "bun db:migrate:local && bun dev:cf",
         "cf-typegen": "wrangler types --env-interface CloudflareBindings"
     },
     "dependencies": {

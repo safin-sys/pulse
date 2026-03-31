@@ -6,27 +6,25 @@
 
 	let loading = $state(false);
 	let error = $state<string | null>(null);
-	let name = $state("");
 	let email = $state("");
 	let password = $state("");
 
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
-		if (!name || !email || !password) {
+		if (!email || !password) {
 			error = "All fields are required";
 			return;
 		}
 		loading = true;
 		error = null;
 		try {
-			const { data } = await auth.signup({
+			const { data } = await auth.login({
 				email,
-				password,
-				name
+				password
 			});
 
-			if (!data.success) {
-				error = data.error;
+			if (!data?.success) {
+				error = data?.error || "Invalid credentials";
 				return;
 			}
 			goto("/dashboard");
@@ -39,7 +37,7 @@
 </script>
 
 <svelte:head>
-	<title>Sign up — Pulse</title>
+	<title>Sign in — Pulse</title>
 </svelte:head>
 
 <div class="min-h-screen overflow-x-hidden bg-black font-sans text-white">
@@ -77,25 +75,14 @@
 			</a>
 		</div>
 
-		<!-- Signup Card -->
+		<!-- Login Card -->
 		<div class="mx-auto max-w-md">
 			<div class="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
 				<div class="border-b border-white/10 px-6 py-4">
-					<h1 class="text-xl font-semibold">Create your account</h1>
+					<h1 class="text-xl font-semibold">Welcome back</h1>
 				</div>
 				<div class="flex flex-col gap-6 p-6">
 					<form class="flex flex-col gap-4" onsubmit={handleSubmit}>
-						<div class="flex flex-col gap-2">
-							<label for="name" class="text-sm font-medium text-white/70">Name</label>
-							<Input
-								name="name"
-								id="name"
-								type="text"
-								placeholder="Kanye"
-								oninput={(e) => (name = e.currentTarget.value)}
-							/>
-						</div>
-
 						<div class="flex flex-col gap-2">
 							<label for="email" class="text-sm font-medium text-white/70">Email</label>
 							<Input
@@ -113,8 +100,7 @@
 								name="password"
 								id="password"
 								type="password"
-								placeholder="Min. 8 characters"
-								minlength={8}
+								placeholder="Enter your password"
 								oninput={(e) => (password = e.currentTarget.value)}
 							/>
 						</div>
@@ -149,18 +135,28 @@
 										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 									></path>
 								</svg>
-								Creating account...
+								Signing in...
 							{:else}
-								Create account
+								Sign in
 							{/if}
 						</Button>
 					</form>
 
 					<!-- Footer -->
-					<p class="text-center text-sm text-white/40">
-						Already have an account?
-						<a href="/login" class="ml-1 font-medium text-cyan-400 hover:text-cyan-300">Sign in</a>
-					</p>
+					<div>
+						<p class="text-center text-sm text-white/40">
+							Forgot password?
+							<a href="/forgot" class="ml-1 font-medium text-cyan-400 hover:text-cyan-300"
+								>Reset</a
+							>
+						</p>
+						<p class="text-center text-sm text-white/40">
+							Don't have an account?
+							<a href="/signup" class="ml-1 font-medium text-cyan-400 hover:text-cyan-300"
+								>Sign up</a
+							>
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -195,12 +191,12 @@
 				Pricing
 			</Button>
 			<div class="mx-1 h-6 w-px bg-white/10"></div>
-			<a href="/login">
+			<a href="/signup">
 				<Button
 					size="sm"
 					class="rounded-full bg-linear-to-r from-cyan-500 via-blue-500 to-violet-500 px-5 font-medium text-white hover:opacity-90"
 				>
-					Sign in
+					Sign up
 				</Button>
 			</a>
 		</nav>

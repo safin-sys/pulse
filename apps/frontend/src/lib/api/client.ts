@@ -52,17 +52,8 @@ export const tryRefreshToken = async () => {
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
 	const makeRequest = async (token?: string): Promise<Response> => {
-		const headers: Record<string, string> = {
-			...(init?.headers as Record<string, string> || {})
-		};
-
-		if (token) {
-			headers["Authorization"] = `Bearer ${token}`;
-		}
-
 		return fetch(input, {
 			...init,
-			headers,
 			credentials: "include"
 		});
 	};

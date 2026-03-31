@@ -45,8 +45,10 @@
 
 	const get_projects = async () => {
 		const { data } = await projects.getAll();
+		
 		if (data && data.data.projects.length === 0) {
 			showModal = true;
+			loading = false;
 			return;
 		}
 		project = data.data.projects[0];

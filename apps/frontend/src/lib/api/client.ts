@@ -1,48 +1,92 @@
 import { hc } from "hono/client";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { AppType } from "@pulse/backend";
+import { browser } from "$app/environment";
 
 export type ApiClient = ReturnType<typeof createClient>;
 
-const getCookie = (name: string): string | null => {
-    if (typeof document === "undefined") return null;
-    const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+"));
-    return match ? decodeURIComponent(match[2]) : null;
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+const subscribeToRefresh = (callback: (token: string) => void) => {
+	refreshSubscribers.push(callback);
 };
 
-const setCookie = (name: string, value: string, days: number = 7) => {
-    if (typeof document === "undefined") return;
-    const expires = new Date(Date.now() + days * 864e5).toUTCString();
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+const onRefreshed = (token: string) => {
+	refreshSubscribers.forEach((cb) => cb(token));
+	refreshSubscribers = [];
 };
 
-const deleteCookie = (name: string) => {
-    if (typeof document === "undefined") return;
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-};
+export const tryRefreshToken = async () => {
+	if (isRefreshing) {
+		return new Promise<string>((resolve) => {
+			subscribeToRefresh((token) => resolve(token));
+		});
+	}
 
-export const cookies = {
-    getAccessToken: () => getCookie("access_token"),
-    getRefreshToken: () => getCookie("refresh_token"),
-    setTokens: (accessToken: string, refreshToken: string) => {
-        setCookie("access_token", accessToken);
-        setCookie("refresh_token", refreshToken);
-    },
-    clearTokens: () => {
-        deleteCookie("access_token");
-        deleteCookie("refresh_token");
-    },
+	isRefreshing = true;
+
+	try {
+		const res = await fetch(`${PUBLIC_API_URL}auth/refresh`, {
+			method: "POST",
+			credentials: "include"
+		});
+
+		if (res.ok) {
+			const json = await res.json();
+			if (browser) {
+				localStorage.setItem("auth-check", Date.now().toString());
+			}
+			onRefreshed(json.access_token);
+			return json.access_token;
+		} else {
+			if (browser) {
+				localStorage.setItem("auth-check", "logout");
+			}
+			throw new Error("Refresh failed");
+		}
+	} finally {
+		isRefreshing = false;
+	}
 };
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    return fetch(input, {
-        ...init,
-        credentials: "include",
-    });
+	const makeRequest = async (token?: string): Promise<Response> => {
+		const headers: Record<string, string> = {
+			...(init?.headers as Record<string, string> || {})
+		};
+
+		if (token) {
+			headers["Authorization"] = `Bearer ${token}`;
+		}
+
+		return fetch(input, {
+			...init,
+			headers,
+			credentials: "include"
+		});
+	};
+
+	try {
+		const response = await makeRequest();
+
+		if (response.status === 401) {
+			try {
+				const token = await tryRefreshToken();
+				return makeRequest(token);
+			} catch {
+				return response;
+			}
+		}
+
+		return response;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const createClient = () => {
-    return hc<AppType>(PUBLIC_API_URL, { fetch: customFetch });
+	return hc<AppType>(PUBLIC_API_URL, { fetch: customFetch, init: { credentials: "include" } });
 };
 
 export const api = createClient();

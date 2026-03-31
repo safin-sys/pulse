@@ -6,7 +6,7 @@
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "tsup && cp dist/index.js ../frontend/static/sdk.js"
+        "build": "tsup && cp dist/index.js ../frontend/static/pulse.js"
     },
     "keywords": [
         "Analytics"

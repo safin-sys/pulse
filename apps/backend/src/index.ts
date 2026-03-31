@@ -13,7 +13,7 @@ const app = new Hono();
 app.use(
     "*",
     cors({
-        origin: ["https://pulsed.pages.dev", "https://pulsedev.pages.dev/","http://localhost:3000"],
+        origin: ["https://pulsed.pages.dev", "https://pulsedev.pages.dev","http://localhost:3000"],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type", "Authorization"],
         credentials: true,

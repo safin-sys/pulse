@@ -1,4 +1,5 @@
 <script lang="ts">
+	import FloatingNav from '$lib/components/floating-nav.svelte';
 	import { Button } from '$lib/components/ui/button';
 </script>
 
@@ -124,21 +125,5 @@
 	</main>
 
 	<!-- Floating nav -->
-	<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-		<nav class="flex items-center gap-1 px-3 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 shadow-2xl">
-			<Button variant="ghost" size="sm" class="text-white/70 hover:text-white hover:bg-white/10 rounded-full px-4">
-				Home
-			</Button>
-			<Button variant="ghost" size="sm" class="text-white/70 hover:text-white hover:bg-white/10 rounded-full px-4">
-				How it works
-			</Button>
-			<Button variant="ghost" size="sm" class="text-white/70 hover:text-white hover:bg-white/10 rounded-full px-4">
-				Pricing
-			</Button>
-			<div class="w-px h-6 bg-white/10 mx-1"></div>
-			<Button size="sm" class="bg-linear-to-r from-cyan-500 via-blue-500 to-violet-500 text-white hover:opacity-90 rounded-full px-5 font-medium">
-				Sign in
-			</Button>
-		</nav>
-	</div>
+	<FloatingNav />
 </div>

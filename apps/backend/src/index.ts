@@ -10,15 +10,22 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-app.use(
-    "*",
-    cors({
-        origin: ["https://pulsed.pages.dev", "https://pulsedev.pages.dev","http://localhost:3000"],
-        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowHeaders: ["Content-Type", "Authorization"],
-        credentials: true,
-    }),
-);
+const corsConfig = {
+    origin: [
+        "https://pulsed.pages.dev",
+        "https://pulsedev.pages.dev",
+        "http://localhost:3000",
+    ],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+};
+
+const corsPaths = ["/auth/*", "/projects/*", "/dashboard/*"];
+
+corsPaths.forEach((path) => {
+    app.use(path, cors(corsConfig));
+});
 
 const routes = app
     .route("/auth", auth)

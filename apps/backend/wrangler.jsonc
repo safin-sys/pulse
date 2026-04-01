@@ -3,19 +3,22 @@
     "name": "api",
     "compatibility_date": "2025-08-03",
     "main": "./src/index.ts",
+    "observability": {
+        "enabled": false,
+    },
     "d1_databases": [
         {
             "binding": "DB",
             "database_name": "DB",
-            "database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a"
-        }
+            "database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a",
+        },
     ],
     "kv_namespaces": [
         {
             "binding": "CACHE_KV",
             "id": "53ca7219ba1f4d92afd9a4e879b1a570",
-            "preview_id": "53ca7219ba1f4d92afd9a4e879b1a570"
-        }
+            "preview_id": "53ca7219ba1f4d92afd9a4e879b1a570",
+        },
     ],
     "env": {
         "dev": {
@@ -24,15 +27,15 @@
                 {
                     "binding": "DB",
                     "database_name": "DB",
-                    "database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a"
-                }
+                    "database_id": "d2e1e41d-833d-469e-836d-44394b2c4c9a",
+                },
             ],
             "kv_namespaces": [
                 {
                     "binding": "CACHE_KV",
-                    "id": "53ca7219ba1f4d92afd9a4e879b1a570"
-                }
-            ]
+                    "id": "53ca7219ba1f4d92afd9a4e879b1a570",
+                },
+            ],
         },
         "prod": {
             "name": "api",
@@ -40,15 +43,15 @@
                 {
                     "binding": "DB",
                     "database_name": "DB",
-                    "database_id": "bddd0422-dbaf-4182-8aba-4a46827407f6"
-                }
+                    "database_id": "bddd0422-dbaf-4182-8aba-4a46827407f6",
+                },
             ],
             "kv_namespaces": [
                 {
                     "binding": "CACHE_KV",
-                    "id": "1ee54f82baf648b6b0164188138b4a21"
-                }
-            ]
-        }
-    }
+                    "id": "1ee54f82baf648b6b0164188138b4a21",
+                },
+            ],
+        },
+    },
 }

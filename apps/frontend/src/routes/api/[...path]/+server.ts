@@ -1,9 +1,9 @@
 import type { RequestHandler } from './$types';
-import { PUBLIC_API_URL } from '$env/static/public';
+import { WORKER_URL } from '$env/static/private';
 
 const handler: RequestHandler = async ({ request, params }) => {
     const url = new URL(request.url);
-    const targetUrl = `${PUBLIC_API_URL}/${params.path}${url.search}`;
+    const targetUrl = `${WORKER_URL}/${params.path}${url.search}`;
 
     return fetch(targetUrl, {
         method: request.method,

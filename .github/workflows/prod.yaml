@@ -37,6 +37,7 @@ jobs:
         run: bun run build
         env:
           PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+          WORKER_URL: ${{ secrets.PROD_WORKER_URL }}
 
       - name: Deploy to Cloudflare Pages (prod)
         uses: cloudflare/wrangler-action@v3

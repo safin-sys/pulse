@@ -8,8 +8,14 @@ import {
     store,
 } from "./service";
 import { zValidator } from "@hono/zod-validator";
+import { cors } from "hono/cors";
 
 const app = new Hono<{ Bindings: Bindings }>()
+.use('*', cors({
+    origin: '*',
+    allowMethods: ['POST', 'OPTIONS'],
+    allowHeaders: ['Content-Type'],
+}))
 .post("/", zValidator("json", PayloadSchema), async (c) => {
     const payload = c.req.valid("json");
 

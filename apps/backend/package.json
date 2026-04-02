@@ -2,7 +2,7 @@
     "name": "@pulse/backend",
     "type": "module",
     "scripts": {
-        "dev": "wrangler dev --env dev",
+        "dev": "wrangler dev --env dev --port 5173",
 
         "db:create": "wrangler d1 create DB",
         

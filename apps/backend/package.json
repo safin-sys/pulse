@@ -2,19 +2,20 @@
     "name": "@pulse/backend",
     "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "$npm_execpath run build && vite preview",
-        "deploy": "$npm_execpath run build && wrangler deploy",
+        "dev": "wrangler dev --env dev --port 5173",
+
         "db:create": "wrangler d1 create DB",
+        
+        "db:migrate:local": "wrangler d1 migrations apply DB --local",
+        "db:migrate:dev": "wrangler d1 migrations apply DB --remote --env dev",
+        "db:migrate:prod": "wrangler d1 migrations apply DB --remote --env prod",
+        
         "db:drop:local": "wrangler d1 execute DB --local --command=\"DROP TABLE IF EXISTS events; DROP TABLE IF EXISTS daily_stats; DROP TABLE IF EXISTS daily_pages; DROP TABLE IF EXISTS daily_referrers; DROP TABLE IF EXISTS daily_countries; DROP TABLE IF EXISTS daily_browsers; DROP TABLE IF EXISTS daily_devices; DROP TABLE IF EXISTS projects; DROP TABLE IF EXISTS refresh_tokens; DROP TABLE IF EXISTS reset_tokens; DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS d1_migrations;\"",
-        "db:migrate:remote:dev": "wrangler d1 migrations apply DB --remote --env dev",
-        "db:migrate:remote:prod": "wrangler d1 migrations apply DB --remote --env prod",
         "db:seed:local": "npx tsx src/scripts/seed.ts && wrangler d1 execute DB --local --file=.wrangler/seed/seed.sql",
+        
         "db:fresh:local": "bun db:drop:local && bun db:migrate:local && bun db:seed:local",
-        "dev:cf": "wrangler dev --env dev",
-        "dev:full": "bun db:migrate:local && bun dev:cf",
-        "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+
+        "cf:types": "wrangler types --env-interface CloudflareBindings"
     },
     "dependencies": {
         "@hono/zod-validator": "^0.7.6",

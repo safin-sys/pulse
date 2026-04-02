@@ -1,70 +1,54 @@
 import { hc } from "hono/client";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { AppType } from "@pulse/backend";
-import { browser } from "$app/environment";
-
-export type ApiClient = ReturnType<typeof createClient>;
+import { auth } from "./auth";
 
 let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
+let refreshSubscribers: Array<() => void> = [];
 
-const subscribeToRefresh = (callback: (token: string) => void) => {
+const subscribeToRefresh = (callback: () => void) => {
 	refreshSubscribers.push(callback);
 };
 
-const onRefreshed = (token: string) => {
-	refreshSubscribers.forEach((cb) => cb(token));
+const onRefreshed = () => {
+	refreshSubscribers.forEach((cb) => cb());
 	refreshSubscribers = [];
 };
 
-export const tryRefreshToken = async () => {
+const tryRefreshToken = async (): Promise<void> => {
 	if (isRefreshing) {
-		return new Promise<string>((resolve) => {
-			subscribeToRefresh((token) => resolve(token));
+		return new Promise<void>((resolve) => {
+			subscribeToRefresh(resolve);
 		});
 	}
 
 	isRefreshing = true;
 
 	try {
-		const res = await fetch(`${PUBLIC_API_URL}auth/refresh`, {
-			method: "POST",
-			credentials: "include"
-		});
+		const res = await auth.refresh()
 
-		if (res.ok) {
-			const json = await res.json();
-			if (browser) {
-				localStorage.setItem("auth-check", Date.now().toString());
-			}
-			onRefreshed(json.access_token);
-			return json.access_token;
-		} else {
-			if (browser) {
-				localStorage.setItem("auth-check", "logout");
-			}
-			throw new Error("Refresh failed");
-		}
+		if (res.error) throw new Error("Refresh failed");
+
+		onRefreshed();
 	} finally {
 		isRefreshing = false;
 	}
 };
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-	const makeRequest = async (token?: string): Promise<Response> => {
-		return fetch(input, {
+	try {
+		const response = await fetch(input, {
 			...init,
 			credentials: "include"
 		});
-	};
-
-	try {
-		const response = await makeRequest();
 
 		if (response.status === 401) {
 			try {
-				const token = await tryRefreshToken();
-				return makeRequest(token);
+				await tryRefreshToken();
+				return fetch(input, {
+					...init,
+					credentials: "include"
+				});
 			} catch {
 				return response;
 			}
@@ -76,8 +60,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promis
 	}
 };
 
-export const createClient = () => {
-	return hc<AppType>(PUBLIC_API_URL, { fetch: customFetch, init: { credentials: "include" } });
-};
-
-export const api = createClient();
+export const api = hc<AppType>(PUBLIC_API_URL, {
+	fetch: customFetch,
+	init: { credentials: "include" }
+});

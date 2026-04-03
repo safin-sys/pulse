@@ -4,15 +4,17 @@
 	import CreateProjectModal from "$lib/components/create-project-modal.svelte";
 	import FloatingNav from "$lib/components/floating-nav.svelte";
 	import Chart from "$lib/components/chart.svelte";
+	import Header from "$lib/components/dashboard/header.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
 	import type { DashboardResponse, RangeSlug, DashboardQueryParams } from "$lib/types/dashboard";
 
-	let showModal = $state(false);
+	let projectsList: { id: string; name: string; domain: string }[] = $state([]);
 	let project: { id: string; name: string; domain: string } | null = $state(null);
 	let dashboardData: DashboardResponse | null = $state(null);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
+	let showModal = $state(false);
 
 	let selectedRange: RangeSlug = $state("today");
 	let locationView: "country" | "region" | "city" = $state("country");
@@ -51,7 +53,13 @@
 			loading = false;
 			return;
 		}
-		project = data.data.projects[0];
+
+		if (data) {
+			projectsList = data.data.projects;
+			if (!project) {
+				project = data.data.projects[0];
+			}
+		}
 	};
 
 	const fetchDashboard = async () => {
@@ -167,54 +175,52 @@
 		}
 	});
 
-	function handleModalClose(open: boolean) {
-		showModal = open;
+	function handleProjectChange(newProject: { id: string; name: string; domain: string }) {
+		project = newProject;
 	}
 
-	function handleSuccess() {
-		window.location.reload();
+	function handleProjectCreated() {
+		get_projects();
 	}
 </script>
 
 <div class="min-h-screen overflow-x-hidden bg-black font-sans text-white">
-	{#if !project && !loading}
-		<CreateProjectModal bind:open={showModal} onOpenChange={handleModalClose} onSuccess={handleSuccess} />
-		<FloatingNav />
-	{:else if loading}
+	{#if loading}
 		<div class="flex min-h-screen items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
 				<div class="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-blue-500"></div>
 				<p class="text-sm text-white/50">Loading dashboard...</p>
 			</div>
 		</div>
-	{:else if error}
+	{:else if error && !dashboardData}
 		<div class="flex min-h-screen items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
 				<p class="text-red-400">{error}</p>
 				<Button onclick={() => fetchDashboard()}>Retry</Button>
 			</div>
 		</div>
-	{:else if dashboardData}
+	{:else if projectsList.length === 0}
+		<CreateProjectModal
+			bind:open={showModal}
+			onOpenChange={(open) => showModal = open}
+			onSuccess={handleProjectCreated}
+		/>
+		<div class="flex min-h-screen items-center justify-center">
+			<div class="flex flex-col items-center gap-4">
+				<p class="text-white/50">Waiting for project to be created...</p>
+			</div>
+		</div>
+	{:else if dashboardData && project}
 		<div class="flex min-h-screen flex-col">
-			<header class="sticky top-0 z-40 border-b border-white/10 bg-black/80 backdrop-blur-xl">
-				<div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-					<div class="flex items-center gap-4">
-						<h1 class="text-xl font-semibold tracking-tight">{project?.name}</h1>
-						<span class="text-sm text-white/50">{project?.domain}</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<select
-							value={selectedRange}
-							onchange={(e) => handleRangeChange(e.currentTarget.value as RangeSlug)}
-							class="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white outline-none hover:bg-white/10 focus:border-blue-500"
-						>
-							{#each ranges as range}
-								<option value={range.value} class="bg-zinc-900">{range.label}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
-			</header>
+			<Header
+				projects={projectsList}
+				currentProject={project}
+				{selectedRange}
+				{ranges}
+				onProjectChange={handleProjectChange}
+				onRangeChange={handleRangeChange}
+				onProjectCreated={handleProjectCreated}
+			/>
 
 			<main class="flex-1 p-4 md:p-6 lg:p-8">
 				<div class="mx-auto max-w-7xl space-y-6">

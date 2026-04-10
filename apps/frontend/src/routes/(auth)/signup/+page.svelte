@@ -40,45 +40,22 @@
 </script>
 
 <svelte:head>
-	<title>Sign up — Pulse</title>
+	<title>Sign up — Orbit</title>
 </svelte:head>
 
-<div class="min-h-screen overflow-x-hidden bg-black font-sans text-white">
-	<!-- Ambient background -->
-	<div class="fixed inset-0 -z-10">
-		<div class="absolute inset-0 bg-linear-to-b from-[#0a0a0a] to-black"></div>
-		<div
-			class="absolute top-0 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-500/15 blur-[120px]"
-		></div>
-		<div
-			class="absolute right-1/4 bottom-0 h-[300px] w-[400px] rounded-full bg-violet-500/10 blur-[100px]"
-		></div>
-	</div>
-
+<div class="min-h-screen overflow-x-hidden bg-[#0a0a0a] font-sans text-white">
 	<main class="container mx-auto px-6 py-20">
-		<!-- Header -->
 		<div class="mb-12 flex justify-center">
 			<a href="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
-				<div
-					class="flex h-10 w-10 items-center justify-center rounded-[20%] bg-linear-to-br from-cyan-500 via-blue-500 to-violet-500 shadow-lg shadow-cyan-500/25"
-				>
-					<svg
-						class="h-6 w-6 text-white"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M3 12h4l3-9 4 18 3-9h4" />
-					</svg>
-				</div>
-				<span class="text-2xl font-bold">Pulse</span>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+					<path d="M22 8.5C22 9.88071 20.8807 11 19.5 11C18.1193 11 17 9.88071 17 8.5C17 7.11929 18.1193 6 19.5 6C20.8807 6 22 7.11929 22 8.5Z" />
+					<path d="M5.63604 18.364C4.00736 16.7353 3 14.4853 3 12C3 7.02944 7.02944 3 12 3C13.6393 3 15.1762 3.43827 16.5 4.20404M8.5 20.2941C9.57589 20.7487 10.7586 21 12 21C16.9706 21 21 16.9706 21 12C21 11.5348 20.9647 11.0778 20.8966 10.6315" />
+					<path d="M21.1733 6.37998C22.0683 4.52002 22.2767 3.07282 21.6005 2.39789C20.7268 1.52568 18.5637 2.13056 15.8873 3.78543M18.3049 10.8298C17.2978 12.1187 16.1137 13.4588 14.7889 14.7838C9.48663 20.0868 3.93971 23.1394 2.39946 21.6018C1.52229 20.7262 2.13378 18.5507 3.8022 15.8604" />
+				</svg>
+				<span class="text-2xl font-medium tracking-tight">Orbit</span>
 			</a>
 		</div>
 
-		<!-- Signup Card -->
 		<div class="mx-auto max-w-md">
 			<div class="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
 				<div class="border-b border-white/10 px-6 py-4">
@@ -120,14 +97,14 @@
 							/>
 						</div>
 
-						<p class="invisible text-sm text-red-500" class:visible={error}>
+						<p class="invisible text-sm text-red-400" class:visible={error}>
 							{error ?? "Unknown Error"}
 						</p>
 
 						<Button
 							type="submit"
 							disabled={loading}
-							class="w-full rounded-lg bg-linear-to-r from-cyan-500 via-blue-500 to-violet-500 p-6 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+							class="w-full rounded-lg bg-white p-6 font-medium text-black transition-opacity hover:bg-white/90 disabled:opacity-50"
 						>
 							{#if loading}
 								<svg
@@ -157,16 +134,14 @@
 						</Button>
 					</form>
 
-					<!-- Footer -->
 					<p class="text-center text-sm text-white/40">
 						Already have an account?
-						<a href="/login" class="ml-1 font-medium text-cyan-400 hover:text-cyan-300">Sign in</a>
+						<a href="/login" class="ml-1 font-medium text-white/70 hover:text-white">Sign in</a>
 					</p>
 				</div>
 			</div>
 		</div>
 	</main>
 
-	<!-- Floating nav -->
 	<FloatingNav />
 </div>

@@ -1,5 +1,5 @@
 {
-    "name": "@pulse/backend",
+    "name": "@orbit/backend",
     "type": "module",
     "scripts": {
         "dev": "wrangler dev --env dev --port 5173",

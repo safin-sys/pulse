@@ -1,12 +1,12 @@
 {
-    "name": "@pulse/sdk",
+    "name": "@orbit/sdk",
     "description": "",
     "version": "0.0.1",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "tsup && cp dist/index.js ../frontend/static/pulse.js"
+        "build": "tsup && cp dist/index.js ../frontend/static/orbit.js"
     },
     "keywords": [
         "Analytics"

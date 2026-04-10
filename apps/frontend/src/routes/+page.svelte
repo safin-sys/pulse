@@ -1,129 +1,49 @@
 <script lang="ts">
 	import FloatingNav from '$lib/components/floating-nav.svelte';
+	import SaturnCanvas from '$lib/components/saturn-canvas.svelte';
 	import { Button } from '$lib/components/ui/button';
 </script>
 
 <svelte:head>
-	<title>Pulse — Event Analytics</title>
+	<title>Orbit — Ship faster. Track everything.</title>
 </svelte:head>
 
-<div class="min-h-screen bg-black text-white overflow-x-hidden font-sans">
-	<!-- Ambient background -->
-	<div class="fixed inset-0 -z-10">
-		<div class="absolute inset-0 bg-linear-to-b from-[#0a0a0a] to-black"></div>
-		<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-cyan-500/20 rounded-full blur-[150px]"></div>
-		<div class="absolute bottom-0 right-1/4 w-[500px] h-[400px] bg-violet-500/10 rounded-full blur-[120px]"></div>
-		<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[60px_60px]"></div>
-	</div>
-
-	<main class="container mx-auto px-6 pt-32 pb-40">
-		<!-- Logo -->
-		<div class="flex justify-center mb-16">
-			<div class="flex items-center gap-3">
-				<div class="w-10 h-10 rounded-[20%] bg-linear-to-br from-cyan-500 via-blue-500 to-violet-500 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-					<svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M3 12h4l3-9 4 18 3-9h4"/>
-					</svg>
-				</div>
-				<span class="text-2xl font-bold">Pulse</span>
+<div class="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden font-sans">
+	<SaturnCanvas />
+	<main class="relative z-10 container mx-auto px-6 pt-32 pb-40">
+		<div class="max-w-3xl">
+			<div class="mb-16 flex items-center gap-3">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+					<path d="M22 8.5C22 9.88071 20.8807 11 19.5 11C18.1193 11 17 9.88071 17 8.5C17 7.11929 18.1193 6 19.5 6C20.8807 6 22 7.11929 22 8.5Z" />
+					<path d="M5.63604 18.364C4.00736 16.7353 3 14.4853 3 12C3 7.02944 7.02944 3 12 3C13.6393 3 15.1762 3.43827 16.5 4.20404M8.5 20.2941C9.57589 20.7487 10.7586 21 12 21C16.9706 21 21 16.9706 21 12C21 11.5348 20.9647 11.0778 20.8966 10.6315" />
+					<path d="M21.1733 6.37998C22.0683 4.52002 22.2767 3.07282 21.6005 2.39789C20.7268 1.52568 18.5637 2.13056 15.8873 3.78543M18.3049 10.8298C17.2978 12.1187 16.1137 13.4588 14.7889 14.7838C9.48663 20.0868 3.93971 23.1394 2.39946 21.6018C1.52229 20.7262 2.13378 18.5507 3.8022 15.8604" />
+				</svg>
+				<span class="text-2xl font-medium tracking-tight">Orbit</span>
 			</div>
-		</div>
 
-		<!-- Hero -->
-		<div class="text-center max-w-4xl mx-auto mb-24">
-			<h1 class="text-7xl md:text-9xl font-bold tracking-tighter mb-8 leading-[0.9]">
-				<span class="bg-linear-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
-					Know your
-				</span>
-				<br />
-				<span class="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-violet-400">
-					users intimately
-				</span>
+			<h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.9]">
+				Ship faster.<br />
+				Track everything.
 			</h1>
 			
-			<p class="text-xl md:text-2xl text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed">
-				Pulse captures every interaction, every click, every journey — so you can build products people actually love.
+			<p class="text-xl text-white/40 max-w-xl mb-12 leading-relaxed">
+				One script. Infinite insights. Understand your users better with privacy-first analytics.
 			</p>
 
-			<div class="flex flex-col sm:flex-row gap-4 justify-center">
-				<Button size="lg" class="bg-white text-black hover:bg-white/90 h-14 px-10 text-base font-semibold rounded-full">
-					Start free
-				</Button>
-				<Button size="lg" variant="outline" class="border-white/20 text-white hover:bg-white/10 h-14 px-10 text-base font-medium rounded-full">
-					Read docs
-				</Button>
-			</div>
-		</div>
-
-		<!-- Code snippet -->
-		<div class="max-w-2xl mx-auto mb-32">
-			<div class="rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl overflow-hidden">
-				<div class="flex items-center gap-2 px-4 py-3 border-b border-white/10">
-					<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-					<div class="w-3 h-3 rounded-full bg-violet-500/50"></div>
-					<div class="w-3 h-3 rounded-full bg-emerald-500/50"></div>
-					<span class="ml-4 text-xs text-white/30 font-mono">index.html</span>
-				</div>
-				<div class="p-6 text-left bg-[#282c34]">
-					<pre class="text-sm font-mono leading-relaxed"><code><span class="text-gray-500">&lt;!-- One Dark Pro --&gt;</span>
-<span class="text-purple-400">&lt;script</span> <span class="text-blue-400">src</span>=<span class="text-green-400">"https://pulse.so/sdk.js"</span>
-  <span class="text-blue-400">data-project-id</span>=<span class="text-green-400">"your-project-id"</span><span class="text-purple-400">&gt;</span>
-<span class="text-purple-400">&lt;/script&gt;</span>
-
-<span class="text-gray-500">&lt;!-- Track events --&gt;</span>
-<span class="text-cyan-400">&lt;pulse-track</span> <span class="text-blue-400">event</span>=<span class="text-green-400">"pageview"</span><span class="text-cyan-400">&gt;&lt;/pulse-track&gt;</span>
-<span class="text-cyan-400">&lt;pulse-track</span> <span class="text-blue-400">event</span>=<span class="text-green-400">"button_click"</span> <span class="text-blue-400">data-cta</span>=<span class="text-green-400">"signup"</span><span class="text-cyan-400">&gt;&lt;/pulse-track&gt;</span></code></pre>
-				</div>
-			</div>
-		</div>
-
-		<!-- How it works -->
-		<div class="max-w-4xl mx-auto mb-32">
-			<h2 class="text-3xl font-bold text-center mb-4">How it works</h2>
-			<p class="text-white/40 text-center mb-16">Three steps to knowing your users</p>
-			
-			<div class="space-y-8">
-				<div class="flex gap-6 items-start">
-					<div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold shrink-0">1</div>
-					<div>
-						<h3 class="text-xl font-semibold mb-2">Add the script</h3>
-						<p class="text-white/40">Copy one line of code into your website. No configuration needed.</p>
-					</div>
-				</div>
-				<div class="flex gap-6 items-start">
-					<div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold shrink-0">2</div>
-					<div>
-						<h3 class="text-xl font-semibold mb-2">Events start flowing</h3>
-						<p class="text-white/40">Pageviews, clicks, and custom events are captured automatically.</p>
-					</div>
-				</div>
-				<div class="flex gap-6 items-start">
-					<div class="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 font-bold shrink-0">3</div>
-					<div>
-						<h3 class="text-xl font-semibold mb-2">Explore in dashboard</h3>
-						<p class="text-white/40">See user journeys, funnels, and retention in real-time.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Metrics cards -->
-		<div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-32">
-			<div class="p-8 rounded-2xl border border-white/10 bg-white/5">
-				<div class="text-5xl font-bold text-cyan-400 mb-2">50ms</div>
-				<div class="text-white/40">Average latency</div>
-			</div>
-			<div class="p-8 rounded-2xl border border-white/10 bg-white/5">
-				<div class="text-5xl font-bold text-blue-400 mb-2">10M</div>
-				<div class="text-white/40">Events per day</div>
-			</div>
-			<div class="p-8 rounded-2xl border border-white/10 bg-white/5">
-				<div class="text-5xl font-bold text-violet-400 mb-2">$0</div>
-				<div class="text-white/40">First 100k events</div>
+			<div class="flex gap-4">
+				<a href="/signup">
+					<Button size="lg" class="bg-white text-black hover:bg-white/90 h-14 px-8 text-base font-medium rounded-full transition-all duration-200 hover:scale-105">
+						Start
+					</Button>
+				</a>
+				<a href="/demo">
+					<Button size="lg" variant="outline" class="border-white/20 text-white hover:bg-white/10 h-14 px-8 text-base font-medium rounded-full transition-all duration-200 hover:scale-105">
+						Demo
+					</Button>
+				</a>
 			</div>
 		</div>
 	</main>
 
-	<!-- Floating nav -->
 	<FloatingNav />
 </div>

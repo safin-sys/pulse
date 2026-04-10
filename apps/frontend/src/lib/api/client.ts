@@ -1,6 +1,6 @@
 import { hc } from "hono/client";
 import { PUBLIC_API_URL } from "$env/static/public";
-import type { AppType } from "@pulse/backend";
+import type { AppType } from "@orbit/backend";
 import { auth } from "./auth";
 
 let isRefreshing = false;

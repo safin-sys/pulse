@@ -1,5 +1,6 @@
 <script lang="ts">
 	import FloatingNav from '$lib/components/floating-nav.svelte';
+	import SaturnCanvas from '$lib/components/saturn-canvas.svelte';
 	import { Button } from '$lib/components/ui/button';
 </script>
 
@@ -8,7 +9,8 @@
 </svelte:head>
 
 <div class="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden font-sans">
-	<main class="container mx-auto px-6 pt-32 pb-40">
+	<SaturnCanvas />
+	<main class="relative z-10 container mx-auto px-6 pt-32 pb-40">
 		<div class="max-w-3xl">
 			<div class="mb-16 flex items-center gap-3">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">

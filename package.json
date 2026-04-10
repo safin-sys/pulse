@@ -1,5 +1,5 @@
 {
-    "name": "pulse",
+    "name": "orbit",
     "module": "index.ts",
     "type": "module",
     "private": true,

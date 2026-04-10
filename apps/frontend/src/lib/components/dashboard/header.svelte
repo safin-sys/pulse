@@ -86,11 +86,10 @@
 		<div class="flex items-center gap-3">
 			<!-- Logo -->
 			<div class="flex items-center gap-2">
-				<div class="w-8 h-8 rounded-[20%] bg-linear-to-br from-cyan-500 via-blue-500 to-violet-500 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-					<svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M3 12h4l3-9 4 18 3-9h4"/>
-					</svg>
-				</div>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="3" />
+					<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+				</svg>
 				<span class="text-lg font-semibold tracking-tight">Pulse</span>
 			</div>
 

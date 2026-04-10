@@ -1,5 +1,5 @@
 {
-	"name": "@pulse/frontend",
+	"name": "@orbit/frontend",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -14,7 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
-		"@pulse/backend": "workspace:*",
+		"@orbit/backend": "workspace:*",
 		"chart.js": "^4.5.1",
 		"hono": "4.12.9"
 	},

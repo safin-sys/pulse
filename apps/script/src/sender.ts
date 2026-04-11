@@ -23,6 +23,6 @@ export const sendBatch = async (batch: { events: any[], apiKey: string }) => {
             keepalive: true,
         });
     } catch (e) {
-        console.error('[Pulse] Failed to send batch', e);
+        console.error('[Orbit] Failed to send batch', e);
     }
 };

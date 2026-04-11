@@ -1,5 +1,5 @@
 export const getVisitorId = (): string => {
-    const key = "analytics_visitor_id";
+    const key = "orb_id";
     let visitorId = localStorage.getItem(key);
     if (!visitorId) {
         visitorId = generateId();

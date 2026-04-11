@@ -1,138 +1,77 @@
 <script lang="ts">
-	let props = $props();
+	import FloatingNav from '$lib/components/floating-nav.svelte';
 
-	const statusColor = $derived(props.data.error
-		? "text-red-400"
-		: props.data.data?.status === "ok"
-			? "text-emerald-400"
-			: "text-amber-400");
-	const statusBg = $derived(props.data.error
-		? "bg-red-500/20 border-red-500/30"
-		: props.data.data?.status === "ok"
-			? "bg-emerald-500/20 border-emerald-500/30"
-			: "bg-amber-500/20 border-amber-500/30");
+	let props = $props();
 </script>
 
 <svelte:head>
-	<title>Health — Pulse</title>
+	<title>Health — Orbit</title>
 </svelte:head>
 
-<div class="min-h-screen overflow-x-hidden bg-black font-sans text-white">
-	<!-- Ambient background -->
-	<div class="fixed inset-0 -z-10">
-		<div class="absolute inset-0 bg-linear-to-b from-[#0a0a0a] to-black"></div>
-		<div
-			class="absolute top-0 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-500/15 blur-[120px]"
-		></div>
-		<div
-			class="absolute right-1/4 bottom-0 h-[300px] w-[400px] rounded-full bg-violet-500/10 blur-[100px]"
-		></div>
-	</div>
-
-	<main class="container mx-auto px-6 py-20">
-		<!-- Header -->
-		<div class="mb-12 flex justify-center">
-			<a href="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
-				<div
-					class="flex h-10 w-10 items-center justify-center rounded-[20%] bg-linear-to-br from-cyan-500 via-blue-500 to-violet-500 shadow-lg shadow-cyan-500/25"
-				>
-					<svg
-						class="h-6 w-6 text-white"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M3 12h4l3-9 4 18 3-9h4" />
-					</svg>
-				</div>
-				<span class="text-2xl font-bold">Pulse</span>
-			</a>
-		</div>
-
-		<!-- Status Card -->
+<div class="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden font-sans">
+	<main class="relative z-10 container mx-auto px-6 py-20">
 		<div class="mx-auto max-w-md">
+			<div class="mb-12 flex justify-center">
+				<a href="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="currentColor" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+						<path d="M22 8.5C22 9.88071 20.8807 11 19.5 11C18.1193 11 17 9.88071 17 8.5C17 7.11929 18.1193 6 19.5 6C20.8807 6 22 7.11929 22 8.5Z" />
+						<path d="M5.63604 18.364C4.00736 16.7353 3 14.4853 3 12C3 7.02944 7.02944 3 12 3C13.6393 3 15.1762 3.43827 16.5 4.20404M8.5 20.2941C9.57589 20.7487 10.7586 21 12 21C16.9706 21 21 16.9706 21 12C21 11.5348 20.9647 11.0778 20.8966 10.6315" />
+						<path d="M21.1733 6.37998C22.0683 4.52002 22.2767 3.07282 21.6005 2.39789C20.7268 1.52568 18.5637 2.13056 15.8873 3.78543M18.3049 10.8298C17.2978 12.1187 16.1137 13.4588 14.7889 14.7838C9.48663 20.0868 3.93971 23.1394 2.39946 21.6018C1.52229 20.7262 2.13378 18.5507 3.8022 15.8604" />
+					</svg>
+					<span class="text-2xl font-medium tracking-tight">Orbit</span>
+					<span class="text-[10px] font-medium uppercase tracking-widest px-1.5 py-0.5 rounded-md border border-white/20 text-white/50">Alpha</span>
+				</a>
+			</div>
+
 			<div class="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
 				<div class="border-b border-white/10 px-6 py-4">
 					<h1 class="text-xl font-semibold">System Status</h1>
 				</div>
 				<div class="p-8">
-{#if props.data.error}
+					{#if !props.data}
 						<div class="text-center">
-							<div class="w-16 h-16 mx-auto mb-4 rounded-full {statusBg} flex items-center justify-center">
-								<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5">
+								<svg class="h-8 w-8 text-white/40 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+								</svg>
+							</div>
+							<div class="mb-2 text-lg font-medium text-white/60">Checking status...</div>
+						</div>
+					{:else if props.data.error}
+						<div class="text-center">
+							<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-red-500/30 bg-red-500/20">
+								<svg class="h-8 w-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 								</svg>
 							</div>
-							<div class="text-red-400 font-semibold text-lg mb-2">System Offline</div>
-							<p class="text-white/40 text-sm">Unable to connect to the API</p>
+							<div class="mb-2 text-lg font-semibold text-red-400">System Offline</div>
+							<p class="text-sm text-white/40">Unable to connect to the API</p>
 						</div>
-					{:else if props.data.data}
+					{:else if props.data.data?.status === 'ok'}
 						<div class="text-center">
-							<div
-								class="mx-auto mb-4 h-16 w-16 rounded-full {statusBg} flex items-center justify-center"
-							>
-								{#if props.data.data.status === "ok"}
-									<svg
-										class="h-8 w-8 text-emerald-400"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M5 13l4 4L19 7"
-										/>
-									</svg>
-								{:else}
-									<svg
-										class="h-8 w-8 text-amber-400"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-										/>
-									</svg>
-								{/if}
+							<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/20">
+								<svg class="h-8 w-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+								</svg>
 							</div>
-							<div class="{statusColor} mb-2 text-lg font-semibold">
-								{props.data.data.status === "ok" ? "All Systems Operational" : "Degraded"}
-							</div>
+							<div class="mb-2 text-lg font-semibold text-emerald-400">All Systems Operational</div>
 							<p class="text-sm text-white/40">API is responding normally</p>
 						</div>
 					{:else}
 						<div class="text-center">
-							<div
-								class="mx-auto mb-4 flex h-16 w-16 animate-pulse items-center justify-center rounded-full bg-white/10"
-							>
-								<svg
-									class="h-8 w-8 text-white/40"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-									/>
+							<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/20">
+								<svg class="h-8 w-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
 								</svg>
 							</div>
-							<div class="mb-2 font-medium text-white/60">Checking status...</div>
+							<div class="mb-2 text-lg font-semibold text-amber-400">Degraded</div>
+							<p class="text-sm text-white/40">Some services are experiencing issues</p>
 						</div>
 					{/if}
 				</div>
 			</div>
 		</div>
 	</main>
+
+	<FloatingNav />
 </div>

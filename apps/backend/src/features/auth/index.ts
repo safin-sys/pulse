@@ -5,6 +5,13 @@ import response from "../../utils/response";
 import { zValidator } from "@hono/zod-validator";
 import { getCookie, setCookie } from "hono/cookie";
 
+const getCookieOptions = (environment: string) => ({
+    httpOnly: true,
+    secure: environment === "PRODUCTION",
+    sameSite: "lax",
+    path: "/",
+});
+
 const app = new Hono<{ Bindings: Bindings }>()
 .post("/signup", zValidator("json", SignupBodySchema), async (c) => {
     const data = c.req.valid("json");
@@ -17,19 +24,15 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
 
     if(res.success) {
+        const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
+        
         setCookie(c, "access_token", res.data.access_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 15,
         });
         
         setCookie(c, "refresh_token", res.data.refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 60 * 24 * 7,
         });
     }
@@ -47,19 +50,15 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
 
     if (res.success) {
+        const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
+
         setCookie(c, "access_token", res.data.access_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 15,
         });
 
         setCookie(c, "refresh_token", res.data.refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 60 * 24 * 7,
         });
     }
@@ -87,19 +86,15 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
 
     if (res.success) {
+        const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
+
         setCookie(c, "access_token", res.data.access_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 15,
         });
 
         setCookie(c, "refresh_token", res.data.refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 60 * 60 * 24 * 7,
         });
     }
@@ -126,19 +121,15 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
 
     if (res.success) {
+        const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
+
         setCookie(c, "access_token", "", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 0,
         });
 
         setCookie(c, "refresh_token", "", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            path: "/",
+            ...cookieOptions,
             maxAge: 0,
         });
     }

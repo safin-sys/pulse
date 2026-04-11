@@ -19,6 +19,7 @@
 					<path d="M21.1733 6.37998C22.0683 4.52002 22.2767 3.07282 21.6005 2.39789C20.7268 1.52568 18.5637 2.13056 15.8873 3.78543M18.3049 10.8298C17.2978 12.1187 16.1137 13.4588 14.7889 14.7838C9.48663 20.0868 3.93971 23.1394 2.39946 21.6018C1.52229 20.7262 2.13378 18.5507 3.8022 15.8604" />
 				</svg>
 				<span class="text-2xl font-medium tracking-tight">Orbit</span>
+				<span class="text-[10px] font-medium uppercase tracking-widest px-1.5 py-0.5 rounded-md border border-white/20 text-white/50">Alpha</span>
 			</div>
 
 			<h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.9]">

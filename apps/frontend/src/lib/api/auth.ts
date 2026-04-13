@@ -56,11 +56,20 @@ const reset = async (body: { token: string; new_password: string }) => {
 	return { data: null, error: await res.json() };
 };
 
+const me = async () => {
+	const res = await api.auth.me.$get();
+	if (res.ok) {
+		return { data: await res.json(), error: null };
+	}
+	return { data: null, error: await res.json() };
+};
+
 export const auth = {
 	signup,
 	login,
 	refresh,
 	logout,
 	forgot,
-	reset
+	reset,
+	me
 };

@@ -25,7 +25,7 @@ const tryRefreshToken = async (): Promise<void> => {
 	isRefreshing = true;
 
 	try {
-		const res = await auth.refresh()
+		const res = await auth.refresh();
 
 		if (res.error) throw new Error("Refresh failed");
 
@@ -37,12 +37,16 @@ const tryRefreshToken = async (): Promise<void> => {
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
 	try {
+		const url = typeof input === "string" ? input : input.toString();
+
 		const response = await fetch(input, {
 			...init,
 			credentials: "include"
 		});
 
-		if (response.status === 401) {
+		const isAuthRequest = url.includes("/auth/");
+
+		if (response.status === 401 && !isAuthRequest) {
 			try {
 				await tryRefreshToken();
 				return fetch(input, {

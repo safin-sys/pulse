@@ -3,6 +3,7 @@
 	import Button from "$lib/components/ui/button/button.svelte";
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { projects as store, create_project, fetch_projects } from "$lib/stores/projects.svelte";
+	import { toast } from "svelte-sonner";
 
 	interface Props {
 		open: boolean;
@@ -23,6 +24,11 @@
 		if (!success) {
 			return;
 		}
+
+		toast.success("Project created", {
+			description: `${domain} is now being tracked.`,
+			position: "top-center"
+		});
 
 		name = "";
 		domain = "";
@@ -47,7 +53,7 @@
 </script>
 
 <Dialog bind:open onOpenChange={(open) => !store.loading && onOpenChange(open)}>
-	<DialogContent>
+	<DialogContent class="bg-background">
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col items-center gap-1">
 				<DialogTitle>Create your first project</DialogTitle>

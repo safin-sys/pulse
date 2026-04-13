@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { Popover } from "bits-ui";
-	import { projects as store, fetch_projects, create_project, select_project } from "$lib/stores/projects.svelte";
+	import { toast } from "svelte-sonner";
+	import {
+		projects as store,
+		fetch_projects,
+		create_project,
+		select_project
+	} from "$lib/stores/projects.svelte";
 	import type { RangeSlug } from "$lib/types/dashboard";
 
 	const PopoverRoot = Popover.Root;
@@ -40,7 +46,7 @@
 	let showCreateForm = $state(false);
 
 	function getSelectedRangeLabel(): string {
-		return ranges.find(r => r.value === selectedRange)?.label || "Select";
+		return ranges.find((r) => r.value === selectedRange)?.label || "Select";
 	}
 
 	function handleSelectProject(project: Project) {
@@ -60,14 +66,17 @@
 
 		const success = await create_project(createName, createDomain);
 
-		showCreateForm = false;
-		popoverOpen = false;
-		createName = "";
-		createDomain = "";
-
 		if (success) {
+			showCreateForm = false;
+			popoverOpen = false;
 			await fetch_projects();
 			onProjectCreated();
+			toast.success("Project created", {
+				description: `${createDomain} is now being tracked.`,
+				position: "top-center"
+			});
+			createName = "";
+			createDomain = "";
 		}
 	}
 
@@ -78,7 +87,7 @@
 	}
 </script>
 
-<header class="sticky top-0 z-40 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
+<header class="sticky top-0 z-40 border-b border-accent bg-background backdrop-blur-md">
 	<div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
 		<div class="flex items-center gap-4">
 			<!-- Logo -->
@@ -115,7 +124,8 @@
 				<PopoverTrigger
 					class="group flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors hover:bg-white/5"
 				>
-					<span class="max-w-[140px] truncate font-medium text-zinc-200">{currentProject.name}</span>
+					<span class="max-w-[140px] truncate font-medium text-zinc-200">{currentProject.name}</span
+					>
 					<span class="hidden max-w-[100px] truncate text-xs text-zinc-500 sm:inline"
 						>{currentProject.domain}</span
 					>
@@ -141,13 +151,21 @@
 						<!-- Create Project Form -->
 						<div class="flex flex-col gap-3 p-2">
 							<div class="flex items-center justify-between">
-								<h3 class="text-sm font-semibold text-zinc-100">New Project</h3>
 								<button
 									onclick={handleCancelCreate}
 									class="rounded p-1 text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
 								>
-									<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-										<path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+									<h3 class="text-sm font-semibold text-zinc-100">New Project</h3>
+									<svg
+										class="h-4 w-4"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M18 6 6 18" /><path d="m6 6 12 12" />
 									</svg>
 								</button>
 							</div>
@@ -163,7 +181,7 @@
 										bind:value={createName}
 										disabled={store.loading}
 										required
-										class="h-9 w-full rounded-md border border-white/10 bg-zinc-950/50 px-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400/50"
+										class="h-9 w-full rounded-md border border-white/10 bg-zinc-950/50 px-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400/50 focus:outline-none"
 									/>
 								</div>
 								<div class="flex flex-col gap-1.5">
@@ -177,7 +195,7 @@
 										bind:value={createDomain}
 										disabled={store.loading}
 										required
-										class="h-9 w-full rounded-md border border-white/10 bg-zinc-950/50 px-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400/50"
+										class="h-9 w-full rounded-md border border-white/10 bg-zinc-950/50 px-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400/50 focus:outline-none"
 									/>
 									<p class="text-[10px] text-zinc-600">Your website's domain</p>
 								</div>
@@ -208,7 +226,7 @@
 					{:else}
 						<!-- Projects List -->
 						<div class="flex flex-col py-1">
-							<div class="flex max-h-[240px] flex-col overflow-y-auto no-scrollbar">
+							<div class="no-scrollbar flex max-h-[240px] flex-col overflow-y-auto">
 								{#each projects as project}
 									<button
 										onclick={() => handleSelectProject(project)}
@@ -246,7 +264,9 @@
 								onclick={openCreateForm}
 								class="mt-1 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-white/5"
 							>
-								<span class="flex h-5 w-5 items-center justify-center rounded-md border border-zinc-700">
+								<span
+									class="flex h-5 w-5 items-center justify-center rounded-md border border-zinc-700"
+								>
 									<svg
 										class="h-3 w-3 text-zinc-500"
 										viewBox="0 0 24 24"
@@ -294,8 +314,12 @@
 				<div class="flex flex-col py-1">
 					{#each ranges as range}
 						<button
-							onclick={() => { onRangeChange(range.value); rangePopoverOpen = false; }}
-							class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-white/5 {selectedRange === range.value
+							onclick={() => {
+								onRangeChange(range.value);
+								rangePopoverOpen = false;
+							}}
+							class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-white/5 {selectedRange ===
+							range.value
 								? 'text-zinc-100'
 								: 'text-zinc-400'}"
 						>

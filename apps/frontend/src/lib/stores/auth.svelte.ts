@@ -1,5 +1,4 @@
 import { auth as api } from "$lib/api";
-import { goto } from "$app/navigation";
 
 export let auth = $state({
 	user: null,
@@ -73,6 +72,5 @@ export const logout = async () => {
 	auth.user = null;
 	auth.is_authenticated = false;
 	auth.loading = false;
-	goto("/login");
 	return !error;
 };

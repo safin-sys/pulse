@@ -5,9 +5,11 @@
 	import { Button } from "$lib/components/ui/button";
 	import { auth } from "$lib/stores/auth.svelte";
 
-	if (auth.is_authenticated) {
-		goto("/dashboard");
-	}
+	$effect(() => {
+		if (auth.is_authenticated) {
+			goto("/dashboard");
+		}
+	});
 </script>
 
 <svelte:head>

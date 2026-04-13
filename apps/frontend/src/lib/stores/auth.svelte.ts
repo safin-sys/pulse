@@ -1,4 +1,5 @@
 import { auth as api } from "$lib/api";
+import { goto } from "$app/navigation";
 
 export let auth = $state({
 	user: null,
@@ -13,6 +14,9 @@ export const init = async () => {
 	if (error) {
 		auth.user = null;
 		auth.is_authenticated = false;
+		if (error?.code === 401) {
+			await logout();
+		}
 	} else {
 		auth.user = data.user;
 		auth.is_authenticated = true;
@@ -66,13 +70,9 @@ export const signup = async (email: string, password: string, name: string) => {
 export const logout = async () => {
 	auth.loading = true;
 	const { error } = await api.logout();
-	if (error) {
-		auth.error = error?.message || "Something went wrong";
-		auth.loading = false;
-		return false;
-	}
 	auth.user = null;
 	auth.is_authenticated = false;
 	auth.loading = false;
-	return true;
+	goto("/login");
+	return !error;
 };

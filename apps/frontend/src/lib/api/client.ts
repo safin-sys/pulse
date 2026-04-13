@@ -2,6 +2,7 @@ import { hc } from "hono/client";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { AppType } from "@orbit/backend";
 import { auth } from "./auth";
+import { logout } from "$lib/stores/auth.svelte";
 
 let isRefreshing = false;
 let refreshSubscribers: Array<() => void> = [];
@@ -30,6 +31,8 @@ const tryRefreshToken = async (): Promise<void> => {
 		if (res.error) throw new Error("Refresh failed");
 
 		onRefreshed();
+	} catch {
+		onRefreshed();
 	} finally {
 		isRefreshing = false;
 	}
@@ -54,6 +57,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promis
 					credentials: "include"
 				});
 			} catch {
+				await logout();
 				return response;
 			}
 		}

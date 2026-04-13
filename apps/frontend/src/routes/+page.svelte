@@ -1,15 +1,7 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import FloatingNav from "$lib/components/floating-nav.svelte";
 	import SaturnCanvas from "$lib/components/saturn-canvas.svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { auth } from "$lib/stores/auth.svelte";
-
-	$effect(() => {
-		if (auth.is_authenticated) {
-			goto("/dashboard");
-		}
-	});
 </script>
 
 <svelte:head>

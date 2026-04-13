@@ -1,11 +1,14 @@
 import { Hono } from "hono";
 import { ForgotBodySchema, LoginBodySchema, ResetBodySchema, SignupBodySchema } from "./types";
-import { forgot, login, logout, refresh, reset, signup } from "./service";
+import { forgot, login, logout, refresh, reset, signup, get_me } from "./service";
 import response from "../../utils/response";
 import { zValidator } from "@hono/zod-validator";
 import { getCookie, setCookie } from "hono/cookie";
+import { verify } from "hono/jwt";
+import { JWTPayload } from "hono/utils/jwt/types";
+import { CookieOptions } from "hono/utils/cookie";
 
-const getCookieOptions = (environment: string) => ({
+const getCookieOptions = (environment: string): CookieOptions => ({
     httpOnly: true,
     secure: environment === "PRODUCTION",
     sameSite: "lax",
@@ -135,6 +138,45 @@ const app = new Hono<{ Bindings: Bindings }>()
     }
 
     return response(c, res);
+})
+.get("/me", async (c) => {
+    const access_token = getCookie(c, "access_token");
+
+    if (!access_token) {
+        return response(c, {
+            success: false,
+            message: "Access token is required",
+            data: null,
+            error: null,
+            code: 401,
+        });
+    }
+
+    try {
+        const payload = await verify(access_token, c.env.ACCESS_TOKEN_SECRET, "HS256") as JWTPayload;
+
+        if (!payload.id) {
+            return response(c, {
+                success: false,
+                message: "Invalid access token",
+                data: null,
+                error: null,
+                code: 401,
+            });
+        }
+
+        const res = await get_me(c.env.DB, payload.id as string);
+
+        return response(c, res);
+    } catch (error) {
+        return response(c, {
+            success: false,
+            message: "Invalid access token",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 401,
+        });
+    }
 })
 .post("/forgot", zValidator("json", ForgotBodySchema), async (c) => {
     const data = c.req.valid("json");

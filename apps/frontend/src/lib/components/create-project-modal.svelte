@@ -2,7 +2,7 @@
 	import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "$lib/components/ui/dialog";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import Input from "$lib/components/ui/input/input.svelte";
-	import { projects } from "$lib/api/projects";
+	import { projects as store, create_project, fetch_projects } from "$lib/stores/projects.svelte";
 
 	interface Props {
 		open: boolean;
@@ -14,25 +14,19 @@
 
 	let name = $state("");
 	let domain = $state("");
-	let loading = $state(false);
-	let error = $state("");
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		loading = true;
-		error = "";
 
-		const result = await projects.create({ name, domain });
+		const success = await create_project(name, domain);
 
-		if (result.error) {
-			error = result.error.message || "Failed to create project";
-			loading = false;
+		if (!success) {
 			return;
 		}
 
-		loading = false;
 		name = "";
 		domain = "";
+		await fetch_projects();
 		onOpenChange(false);
 		onSuccess?.();
 	}
@@ -40,7 +34,6 @@
 	function handleClose() {
 		name = "";
 		domain = "";
-		error = "";
 		open = false;
 	}
 
@@ -53,7 +46,7 @@
 	}
 </script>
 
-<Dialog bind:open onOpenChange={(open) => !loading && onOpenChange(open)}>
+<Dialog bind:open onOpenChange={(open) => !store.loading && onOpenChange(open)}>
 	<DialogContent>
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col items-center gap-1">
@@ -72,7 +65,7 @@
 						placeholder="My Awesome Project"
 						value={name}
 						oninput={handleNameInput}
-						disabled={loading}
+						disabled={store.loading}
 						required
 					/>
 				</div>
@@ -85,22 +78,22 @@
 						placeholder="example.com"
 						value={domain}
 						oninput={handleDomainInput}
-						disabled={loading}
+						disabled={store.loading}
 						required
 					/>
 					<p class="text-xs text-white/40">Enter your website's domain (e.g., example.com)</p>
 				</div>
 
-				{#if error}
-					<p class="text-sm text-red-400">{error}</p>
+				{#if store.error}
+					<p class="text-sm text-red-400">{store.error}</p>
 				{/if}
 
 				<div class="flex justify-end gap-3 pt-2">
-					<Button type="button" variant="ghost" onclick={handleClose} disabled={loading}>
+					<Button type="button" variant="ghost" onclick={handleClose} disabled={store.loading}>
 						Cancel
 					</Button>
-					<Button type="submit" disabled={loading}>
-						{loading ? "Creating..." : "Create Project"}
+					<Button type="submit" disabled={store.loading}>
+						{store.loading ? "Creating..." : "Create Project"}
 					</Button>
 				</div>
 			</form>

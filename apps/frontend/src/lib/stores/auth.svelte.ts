@@ -7,6 +7,19 @@ export let auth = $state({
 	error: ""
 });
 
+export const init = async () => {
+	auth.loading = true;
+	const { data, error } = await api.me();
+	if (error) {
+		auth.user = null;
+		auth.is_authenticated = false;
+	} else {
+		auth.user = data.user;
+		auth.is_authenticated = true;
+	}
+	auth.loading = false;
+};
+
 export const login = async (email: string, password: string) => {
 	auth.error = "";
 	auth.loading = true;

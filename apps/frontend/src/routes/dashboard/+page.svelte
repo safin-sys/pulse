@@ -184,18 +184,18 @@
 	}
 </script>
 
-<div class="min-h-screen overflow-x-hidden bg-black font-sans text-white">
+<div class="h-screen overflow-x-hidden bg-background font-sans text-foreground">
 	{#if loading}
-		<div class="flex min-h-screen items-center justify-center">
+		<div class="flex h-full items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
-				<div class="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-blue-500"></div>
-				<p class="text-sm text-white/50">Loading dashboard...</p>
+				<div class="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-primary"></div>
+				<p class="text-sm text-muted-foreground">Loading dashboard...</p>
 			</div>
 		</div>
 	{:else if error && !dashboardData}
-		<div class="flex min-h-screen items-center justify-center">
+		<div class="flex h-full items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
-				<p class="text-red-400">{error}</p>
+				<p class="text-destructive">{error}</p>
 				<Button onclick={() => fetchDashboard()}>Retry</Button>
 			</div>
 		</div>
@@ -205,13 +205,13 @@
 			onOpenChange={(open) => showModal = open}
 			onSuccess={handleProjectCreated}
 		/>
-		<div class="flex min-h-screen items-center justify-center">
+		<div class="flex h-full items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
-				<p class="text-white/50">Waiting for project to be created...</p>
+				<p class="text-muted-foreground">Waiting for project to be created...</p>
 			</div>
 		</div>
 	{:else if dashboardData && project}
-		<div class="flex min-h-screen flex-col">
+		<div class="flex h-full flex-col">
 			<Header
 				projects={projectsList}
 				currentProject={project}
@@ -227,39 +227,39 @@
 					<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 						<Card>
 							<CardHeader>
-								<CardTitle class="text-sm font-medium text-white/70">Total Visitors</CardTitle>
+								<CardTitle class="text-sm font-medium text-muted-foreground">Total Visitors</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div class="text-3xl font-bold tracking-tight">
 									{formatNumber(dashboardData.summary.visitors)}
 								</div>
-								<p class="mt-1 text-xs text-white/50">
+								<p class="mt-1 text-xs text-muted-foreground">
 									{dashboardData.range.from} - {dashboardData.range.to}
 								</p>
 							</CardContent>
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle class="text-sm font-medium text-white/70">Total Entries</CardTitle>
+								<CardTitle class="text-sm font-medium text-muted-foreground">Total Entries</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div class="text-3xl font-bold tracking-tight">
 									{formatNumber(dashboardData.summary.entries)}
 								</div>
-								<p class="mt-1 text-xs text-white/50">
+								<p class="mt-1 text-xs text-muted-foreground">
 									Page views
 								</p>
 							</CardContent>
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle class="text-sm font-medium text-white/70">Sessions</CardTitle>
+								<CardTitle class="text-sm font-medium text-muted-foreground">Sessions</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div class="text-3xl font-bold tracking-tight">
 									{formatNumber(dashboardData.summary.sessions)}
 								</div>
-								<p class="mt-1 text-xs text-white/50">
+								<p class="mt-1 text-xs text-muted-foreground">
 									Unique sessions
 								</p>
 							</CardContent>
@@ -288,21 +288,21 @@
 								<CardContent>
 									<div class="space-y-3">
 										{#each dashboardData.pages.rows.slice(0, 5) as page}
-											<div class="flex items-center justify-between rounded-lg bg-white/5 p-3">
+											<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 												<div class="flex-1 truncate font-mono text-sm">{page.path}</div>
 												<div class="flex items-center gap-4 text-sm">
 													<div class="text-right">
 														<div class="font-medium">{formatNumber(page.visitors)}</div>
-														<div class="text-xs text-white/50">visitors</div>
+														<div class="text-xs text-muted-foreground">visitors</div>
 													</div>
 													<div class="text-right">
 														<div class="font-medium">{formatNumber(page.entries)}</div>
-														<div class="text-xs text-white/50">views</div>
+														<div class="text-xs text-muted-foreground">views</div>
 													</div>
 												</div>
 											</div>
 										{:else}
-											<p class="py-8 text-center text-white/50">No page data</p>
+											<p class="py-8 text-center text-muted-foreground">No page data</p>
 										{/each}
 									</div>
 								</CardContent>
@@ -317,23 +317,23 @@
 								<CardContent>
 									<div class="space-y-3">
 										{#each dashboardData.sources.rows.slice(0, 5) as source}
-											<div class="flex items-center justify-between rounded-lg bg-white/5 p-3">
+											<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 												<div class="flex-1 truncate text-sm">
 													{source.referrer || "(Direct)"}
 												</div>
 												<div class="flex items-center gap-4 text-sm">
 													<div class="text-right">
 														<div class="font-medium">{formatNumber(source.visitors)}</div>
-														<div class="text-xs text-white/50">visitors</div>
+														<div class="text-xs text-muted-foreground">visitors</div>
 													</div>
 													<div class="text-right">
 														<div class="font-medium">{formatNumber(source.entries)}</div>
-														<div class="text-xs text-white/50">entries</div>
+														<div class="text-xs text-muted-foreground">entries</div>
 													</div>
 												</div>
 											</div>
 										{:else}
-											<p class="py-8 text-center text-white/50">No referrer data</p>
+											<p class="py-8 text-center text-muted-foreground">No referrer data</p>
 										{/each}
 									</div>
 								</CardContent>
@@ -352,8 +352,8 @@
 												<button
 													onclick={() => handleLocationViewChange(view.value)}
 													class="rounded-md px-2 py-1 text-xs transition-colors {locationView === view.value
-														? 'bg-blue-500 text-white'
-														: 'bg-white/5 text-white/70 hover:bg-white/10'}"
+														? 'bg-primary text-primary-foreground'
+														: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 												>
 													{view.label}
 												</button>
@@ -367,7 +367,7 @@
 											{@const loc = location as any}
 											{@const countryCode = loc.countryCode || loc.countryCode}
 											{@const visitors = loc.visitors}
-											<div class="flex items-center justify-between rounded-lg bg-white/5 p-3">
+											<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 												<div class="flex items-center gap-3">
 													<span class="text-lg">{getCountryEmoji(countryCode)}</span>
 													<span class="text-sm">
@@ -382,11 +382,11 @@
 												</div>
 												<div class="text-right">
 													<div class="font-medium">{formatNumber(visitors)}</div>
-													<div class="text-xs text-white/50">visitors</div>
+													<div class="text-xs text-muted-foreground">visitors</div>
 												</div>
 											</div>
 										{:else}
-											<p class="py-8 text-center text-white/50">No location data</p>
+											<p class="py-8 text-center text-muted-foreground">No location data</p>
 										{/each}
 									</div>
 								</CardContent>
@@ -403,8 +403,8 @@
 												<button
 													onclick={() => handleDeviceViewChange(view.value)}
 													class="rounded-md px-2 py-1 text-xs transition-colors {deviceView === view.value
-														? 'bg-blue-500 text-white'
-														: 'bg-white/5 text-white/70 hover:bg-white/10'}"
+														? 'bg-primary text-primary-foreground'
+														: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 												>
 													{view.label}
 												</button>
@@ -417,14 +417,14 @@
 										{#each dashboardData.devices.rows.slice(0, 5) as device}
 											{@const name = "browser" in device ? device.browser : "os" in device ? device.os : device.device}
 											{@const pct = device.percentage}
-											<div class="flex items-center justify-between rounded-lg bg-white/5 p-3">
+											<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 												<div class="flex items-center gap-3">
 													<span class="text-lg">{getDeviceEmoji(name, deviceView)}</span>
 													<span class="text-sm">{name}</span>
 												</div>
 												<div class="flex items-center gap-3">
-													<div class="h-1.5 w-20 overflow-hidden rounded-full bg-white/10">
-														<div class="h-full rounded-full bg-blue-500" style="width: {pct}%"></div>
+													<div class="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+														<div class="h-full rounded-full bg-primary" style="width: {pct}%"></div>
 													</div>
 													<div class="w-12 text-right text-sm">
 														<span class="font-medium">{pct}%</span>
@@ -432,7 +432,7 @@
 												</div>
 											</div>
 										{:else}
-											<p class="py-8 text-center text-white/50">No device data</p>
+											<p class="py-8 text-center text-muted-foreground">No device data</p>
 										{/each}
 									</div>
 								</CardContent>

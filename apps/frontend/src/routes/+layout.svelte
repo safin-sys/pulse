@@ -13,6 +13,6 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<div class="dark" in:fade={{ duration: 150, delay: 150 }} out:fade={{ duration: 150 }}>
+<div in:fade={{ duration: 150, delay: 150 }} out:fade={{ duration: 150 }}>
 	{@render children()}
 </div>

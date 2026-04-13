@@ -135,16 +135,14 @@
 		}
 
 		function drawSaturn() {
-			// Slightly lifted base (this is the biggest win)
 			ctx.beginPath();
 			ctx.arc(cx, cy, SR, 0, Math.PI * 2);
-			ctx.fillStyle = "#0b0b0b"; // was #0a0a0a
+			ctx.fillStyle = "#000";
 			ctx.fill();
 
-			// Slightly stronger edge definition
 			ctx.beginPath();
 			ctx.arc(cx, cy, SR, 0, Math.PI * 2);
-			ctx.strokeStyle = "rgba(255,255,255,0.06)"; // was 0.04
+			ctx.strokeStyle = "rgba(255,255,255,0.06)";
 			ctx.lineWidth = 3;
 			ctx.stroke();
 		}

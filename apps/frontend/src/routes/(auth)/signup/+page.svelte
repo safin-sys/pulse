@@ -26,7 +26,7 @@
 	<title>Sign up — Orbit</title>
 </svelte:head>
 
-<div class="min-h-screen overflow-x-hidden bg-[#0a0a0a] font-sans text-white">
+<div class="h-screen overflow-hidden bg-background font-sans text-foreground">
 	<main class="container mx-auto px-6 py-20">
 		<div class="mb-12 flex justify-center">
 			<a href="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
@@ -37,7 +37,7 @@
 					height="24"
 					color="currentColor"
 					fill="none"
-					stroke="white"
+					stroke="currentColor"
 					stroke-width="1.5"
 					stroke-linecap="round"
 				>
@@ -56,14 +56,14 @@
 		</div>
 
 		<div class="mx-auto max-w-md">
-			<div class="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
-				<div class="border-b border-white/10 px-6 py-4">
+			<div class="overflow-hidden rounded-2xl border border-border bg-card/50 backdrop-blur-xl">
+				<div class="border-b border-border px-6 py-4">
 					<h1 class="text-xl font-semibold">Create your account</h1>
 				</div>
 				<div class="flex flex-col gap-6 p-6">
 					<form class="flex flex-col gap-4" onsubmit={handleSubmit}>
 						<div class="flex flex-col gap-2">
-							<label for="name" class="text-sm font-medium text-white/70">Name</label>
+							<label for="name" class="text-sm font-medium text-muted-foreground">Name</label>
 							<Input
 								name="name"
 								id="name"
@@ -74,7 +74,7 @@
 						</div>
 
 						<div class="flex flex-col gap-2">
-							<label for="email" class="text-sm font-medium text-white/70">Email</label>
+							<label for="email" class="text-sm font-medium text-muted-foreground">Email</label>
 							<Input
 								name="email"
 								id="email"
@@ -85,7 +85,7 @@
 						</div>
 
 						<div class="flex flex-col gap-2">
-							<label for="password" class="text-sm font-medium text-white/70">Password</label>
+							<label for="password" class="text-sm font-medium text-muted-foreground">Password</label>
 							<Input
 								name="password"
 								id="password"
@@ -96,14 +96,14 @@
 							/>
 						</div>
 
-						<p class="invisible text-sm text-red-400" class:visible={auth.error}>
+						<p class="invisible text-sm text-destructive" class:visible={auth.error}>
 							{auth.error ?? "Unknown Error"}
 						</p>
 
 						<Button
 							type="submit"
 							disabled={auth.loading}
-							class="w-full rounded-lg bg-white p-6 font-medium text-black transition-opacity hover:bg-white/90 disabled:opacity-50"
+							class="w-full rounded-lg bg-primary p-6 font-medium text-primary-foreground transition-opacity hover:bg-primary/90 disabled:opacity-50"
 						>
 							{#if auth.loading}
 								<svg
@@ -133,9 +133,9 @@
 						</Button>
 					</form>
 
-					<p class="text-center text-sm text-white/40">
+					<p class="text-center text-sm text-muted-foreground">
 						Already have an account?
-						<a href="/login" class="ml-1 font-medium text-white/70 hover:text-white">Sign in</a>
+						<a href="/login" class="ml-1 font-medium text-foreground hover:text-primary">Sign in</a>
 					</p>
 				</div>
 			</div>

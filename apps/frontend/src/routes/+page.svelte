@@ -8,7 +8,7 @@
 	<title>Orbit — Ship faster. Track everything.</title>
 </svelte:head>
 
-<div class="min-h-screen overflow-x-hidden bg-[#0a0a0a] font-sans text-white">
+<div class="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
 	<SaturnCanvas />
 	<main class="relative z-10 container mx-auto px-6 pt-32 pb-40">
 		<div class="max-w-3xl">
@@ -20,7 +20,7 @@
 					height="24"
 					color="currentColor"
 					fill="none"
-					stroke="white"
+					stroke="currentColor"
 					stroke-width="1.5"
 					stroke-linecap="round"
 				>
@@ -36,17 +36,17 @@
 				</svg>
 				<span class="text-2xl font-medium tracking-tight">Orbit</span>
 				<span
-					class="rounded-md border border-white/20 px-1.5 py-0.5 text-[10px] font-medium tracking-widest text-white/50 uppercase"
+					class="rounded-md border border-border px-1.5 py-0.5 text-[10px] font-medium tracking-widest text-muted-foreground uppercase"
 					>Alpha</span
 				>
 			</div>
 
-			<h1 class="mb-8 text-6xl leading-[0.9] font-bold tracking-tighter md:text-8xl">
+			<h1 class="mb-8 text-6xl leading-[0.9] font-bold tracking-tighter md:text-8xl text-foreground">
 				Ship faster.<br />
 				Track everything.
 			</h1>
 
-			<p class="mb-12 max-w-xl text-xl leading-relaxed text-white/40">
+			<p class="mb-12 max-w-xl text-xl leading-relaxed text-muted-foreground">
 				One script. Infinite insights. Understand your users better with privacy-first analytics.
 			</p>
 
@@ -54,7 +54,7 @@
 				<a href="/signup">
 					<Button
 						size="lg"
-						class="h-14 rounded-full bg-white px-8 text-base font-medium text-black transition-all duration-200 hover:scale-105 hover:bg-white/90"
+						class="h-14 rounded-full bg-primary px-8 text-base font-medium text-primary-foreground transition-all duration-200 hover:scale-105 hover:bg-primary/90"
 					>
 						Start
 					</Button>
@@ -63,7 +63,7 @@
 					<Button
 						size="lg"
 						variant="outline"
-						class="h-14 rounded-full border-white/20 px-8 text-base font-medium text-white transition-all duration-200 hover:scale-105 hover:bg-white/10"
+						class="h-14 rounded-full border-border px-8 text-base font-medium text-foreground transition-all duration-200 hover:scale-105 hover:bg-accent"
 					>
 						Demo
 					</Button>

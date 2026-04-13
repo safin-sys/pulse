@@ -107,37 +107,31 @@ const app = new Hono<{ Bindings: Bindings }>()
 .post("/logout", async (c) => {
     const refresh_token = getCookie(c, "refresh_token");
 
-    if (!refresh_token) {
-        return response(c, {
-            success: false,
-            message: "Refresh token is required",
-            data: null,
-            error: null,
-            code: 401,
-        });
-    }
-
-    const res = await logout(
+    await logout(
         c.env.DB,
-        refresh_token,
+        refresh_token || "",
         c.env.REFRESH_TOKEN_SECRET,
     );
 
-    if (res.success) {
-        const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
+    const cookieOptions = getCookieOptions(c.env.ENVIRONMENT);
 
-        setCookie(c, "access_token", "", {
-            ...cookieOptions,
-            maxAge: 0,
-        });
+    setCookie(c, "access_token", "", {
+        ...cookieOptions,
+        maxAge: 0,
+    });
 
-        setCookie(c, "refresh_token", "", {
-            ...cookieOptions,
-            maxAge: 0,
-        });
-    }
+    setCookie(c, "refresh_token", "", {
+        ...cookieOptions,
+        maxAge: 0,
+    });
 
-    return response(c, res);
+    return response(c, {
+        code: 200,
+        data: null,
+        error: null,
+        message: "Logged out successfully",
+        success: true
+    });
 })
 .get("/me", async (c) => {
     const access_token = getCookie(c, "access_token");

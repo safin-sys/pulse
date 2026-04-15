@@ -1,8 +1,9 @@
 import { projects as api } from "$lib/api/projects";
+import type { Project } from "$lib/types/project";
 
 export let projects = $state({
-	data: [] as any[],
-	selected_project: null as any,
+	data: [] as Project[],
+	selected_project: null as null | Project,
 	loading: false,
 	error: ""
 });
@@ -16,7 +17,9 @@ export const fetch_projects = async () => {
 		projects.loading = false;
 		return false;
 	}
-	projects.data = data.projects;
+	
+	projects.data = data.data.projects;
+	projects.selected_project = data.data.projects[0]
 	projects.loading = false;
 	return true;
 };
@@ -30,7 +33,7 @@ export const create_project = async (name: string, domain: string) => {
 		projects.loading = false;
 		return false;
 	}
-	projects.data = [data.project, ...projects.data];
+	projects.data = [data.data.project, ...projects.data];
 	projects.loading = false;
 	return true;
 };
@@ -44,9 +47,7 @@ export const update_project = async (project_id: string, body: { name?: string }
 		projects.loading = false;
 		return false;
 	}
-	projects.data = projects.data.map((p) =>
-		p.id === project_id ? data.project : p
-	);
+	projects.data = projects.data.map((p) => (p.id === project_id ? data.project : p));
 	projects.loading = false;
 	return true;
 };
@@ -67,8 +68,4 @@ export const delete_project = async (project_id: string) => {
 	}
 	projects.loading = false;
 	return true;
-};
-
-export const select_project = (project: string) => {
-	projects.selected_project = project;
 };

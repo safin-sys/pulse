@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { projects, dashboard } from "$lib/api";
-	import CreateProjectModal from "$lib/components/create-project-modal.svelte";
+	import { dashboard } from "$lib/api";
+	// import CreateProjectModal from "$lib/components/create-project-modal.svelte";
 	import FloatingNav from "$lib/components/floating-nav.svelte";
 	import Chart from "$lib/components/chart.svelte";
-	import Header from "$lib/components/dashboard/header.svelte";
+	import Header from "$lib/components/dashboard/header/index.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
+	import { dashboard as dashboardStore } from "$lib/stores/dashboard.svelte";
+	import { projects as projectsStore } from "$lib/stores/projects.svelte";
 	import type { DashboardResponse, RangeSlug, DashboardQueryParams } from "$lib/types/dashboard";
 
-	let projectsList: { id: string; name: string; domain: string }[] = $state([]);
-	let project: { id: string; name: string; domain: string } | null = $state(null);
+	let projectsList = $derived(projectsStore.data);
+	let project = $derived(projectsStore.selected_project);
 	let dashboardData: DashboardResponse | null = $state(null);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
-	let showModal = $state(false);
 
-	let selectedRange: RangeSlug = $state("today");
+	let selectedRange: RangeSlug = $derived(dashboardStore.range);
 	let locationView: "country" | "region" | "city" = $state("country");
 	let deviceView: "browser" | "os" | "device" = $state("browser");
 
@@ -44,23 +44,6 @@
 		{ value: "os", label: "Operating Systems" },
 		{ value: "device", label: "Devices" }
 	] as const;
-
-	const get_projects = async () => {
-		const { data } = await projects.getAll();
-		
-		if (data && data.data.projects.length === 0) {
-			showModal = true;
-			loading = false;
-			return;
-		}
-
-		if (data) {
-			projectsList = data.data.projects;
-			if (!project) {
-				project = data.data.projects[0];
-			}
-		}
-	};
 
 	const fetchDashboard = async () => {
 		if (!project) return;
@@ -165,26 +148,15 @@
 		return emojis[name] || "📱";
 	};
 
-	onMount(async () => {
-		await get_projects();
-	});
-
 	$effect(() => {
 		if (project) {
 			fetchDashboard();
 		}
 	});
-
-	function handleProjectChange(newProject: { id: string; name: string; domain: string }) {
-		project = newProject;
-	}
-
-	function handleProjectCreated() {
-		get_projects();
-	}
 </script>
 
 <div class="h-screen overflow-x-hidden bg-background font-sans text-foreground">
+	<Header />
 	{#if loading}
 		<div class="flex h-full items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
@@ -200,11 +172,11 @@
 			</div>
 		</div>
 	{:else if projectsList.length === 0}
-		<CreateProjectModal
+		<!-- <CreateProjectModal
 			bind:open={showModal}
-			onOpenChange={(open) => showModal = open}
+			onOpenChange={(open) => (showModal = open)}
 			onSuccess={handleProjectCreated}
-		/>
+		/> -->
 		<div class="flex h-full items-center justify-center">
 			<div class="flex flex-col items-center gap-4">
 				<p class="text-muted-foreground">Waiting for project to be created...</p>
@@ -212,22 +184,14 @@
 		</div>
 	{:else if dashboardData && project}
 		<div class="flex h-full flex-col">
-			<Header
-				projects={projectsList}
-				currentProject={project}
-				{selectedRange}
-				{ranges}
-				onProjectChange={handleProjectChange}
-				onRangeChange={handleRangeChange}
-				onProjectCreated={handleProjectCreated}
-			/>
-
 			<main class="flex-1 p-4 md:p-6 lg:p-8">
 				<div class="mx-auto max-w-7xl space-y-6">
 					<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 						<Card>
 							<CardHeader>
-								<CardTitle class="text-sm font-medium text-muted-foreground">Total Visitors</CardTitle>
+								<CardTitle class="text-sm font-medium text-muted-foreground"
+									>Total Visitors</CardTitle
+								>
 							</CardHeader>
 							<CardContent>
 								<div class="text-3xl font-bold tracking-tight">
@@ -240,15 +204,15 @@
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle class="text-sm font-medium text-muted-foreground">Total Entries</CardTitle>
+								<CardTitle class="text-sm font-medium text-muted-foreground"
+									>Total Entries</CardTitle
+								>
 							</CardHeader>
 							<CardContent>
 								<div class="text-3xl font-bold tracking-tight">
 									{formatNumber(dashboardData.summary.entries)}
 								</div>
-								<p class="mt-1 text-xs text-muted-foreground">
-									Page views
-								</p>
+								<p class="mt-1 text-xs text-muted-foreground">Page views</p>
 							</CardContent>
 						</Card>
 						<Card>
@@ -259,9 +223,7 @@
 								<div class="text-3xl font-bold tracking-tight">
 									{formatNumber(dashboardData.summary.sessions)}
 								</div>
-								<p class="mt-1 text-xs text-muted-foreground">
-									Unique sessions
-								</p>
+								<p class="mt-1 text-xs text-muted-foreground">Unique sessions</p>
 							</CardContent>
 						</Card>
 					</section>
@@ -351,7 +313,8 @@
 											{#each locationViews as view}
 												<button
 													onclick={() => handleLocationViewChange(view.value)}
-													class="rounded-md px-2 py-1 text-xs transition-colors {locationView === view.value
+													class="rounded-md px-2 py-1 text-xs transition-colors {locationView ===
+													view.value
 														? 'bg-primary text-primary-foreground'
 														: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 												>
@@ -402,7 +365,8 @@
 											{#each deviceViews as view}
 												<button
 													onclick={() => handleDeviceViewChange(view.value)}
-													class="rounded-md px-2 py-1 text-xs transition-colors {deviceView === view.value
+													class="rounded-md px-2 py-1 text-xs transition-colors {deviceView ===
+													view.value
 														? 'bg-primary text-primary-foreground'
 														: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 												>
@@ -415,7 +379,12 @@
 								<CardContent>
 									<div class="space-y-3">
 										{#each dashboardData.devices.rows.slice(0, 5) as device}
-											{@const name = "browser" in device ? device.browser : "os" in device ? device.os : device.device}
+											{@const name =
+												"browser" in device
+													? device.browser
+													: "os" in device
+														? device.os
+														: device.device}
 											{@const pct = device.percentage}
 											<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 												<div class="flex items-center gap-3">

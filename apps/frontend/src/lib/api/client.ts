@@ -47,7 +47,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promis
 			credentials: "include"
 		});
 
-		const isAuthRequest = url.includes("/auth/");
+		const isAuthRequest = url.includes("/auth/") && !url.includes("/auth/me");
 
 		if (response.status === 401 && !isAuthRequest) {
 			try {

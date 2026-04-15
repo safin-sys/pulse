@@ -4,7 +4,7 @@ import type { Project } from "$lib/types/project";
 export let projects = $state({
 	data: [] as Project[],
 	selected_project: null as null | Project,
-	loading: false,
+	loading: true,
 	error: ""
 });
 

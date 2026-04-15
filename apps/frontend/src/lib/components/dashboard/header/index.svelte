@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { fetch_projects } from "$lib/stores/projects.svelte";
+	import Button from "$lib/components/ui/button/button.svelte";
+	import { fetch_projects, projects } from "$lib/stores/projects.svelte";
 	import Logo from "./logo.svelte";
+	import Modal from "./modal.svelte";
 	import ProjectSwitcher from "./project_switcher/index.svelte";
 	import Range from "./range.svelte";
 	import { onMount } from "svelte";
 
+	let modal = $state(false);
+
 	onMount(async () => {
 		await fetch_projects();
+		if (projects.data.length === 0) {
+			modal = true;
+		}
 	});
 </script>
 
@@ -16,14 +23,23 @@
 			<!-- Logo -->
 			<Logo />
 
-			<!-- Divider -->
-			<div class="h-5 w-px bg-white/10"></div>
-
-			<!-- Project Switcher -->
-			<ProjectSwitcher />
+			{#if projects.data.length}
+				<!-- Divider -->
+				<div class="h-5 w-px bg-white/10"></div>
+				<!-- Project Switcher -->
+				<ProjectSwitcher />
+			{/if}
 		</div>
 
-		<!-- Range Selector -->
-		<Range />
+		{#if projects.data.length}
+			<!-- Range Selector -->
+			<Range />
+		{:else}
+			<!-- Create new project button -->
+			<Button variant="outline" disabled={projects.loading} onclick={() => (modal = true)}
+				>Create Project</Button
+			>
+		{/if}
 	</div>
+	<Modal bind:open={modal} />
 </header>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { dashboard } from "$lib/api";
-	// import CreateProjectModal from "$lib/components/create-project-modal.svelte";
 	import Chart from "$lib/components/chart.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
@@ -10,6 +9,7 @@
 
 	let projectsList = $derived(projectsStore.data);
 	let project = $derived(projectsStore.selected_project);
+	let projectLoading = $derived(projectsStore.loading);
 	let dashboardData: DashboardResponse | null = $state(null);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -17,19 +17,6 @@
 	let selectedRange: RangeSlug = $derived(dashboardStore.range);
 	let locationView: "country" | "region" | "city" = $state("country");
 	let deviceView: "browser" | "os" | "device" = $state("browser");
-
-	const ranges: { value: RangeSlug; label: string }[] = [
-		{ value: "today", label: "Today" },
-		{ value: "yesterday", label: "Yesterday" },
-		{ value: "this_week", label: "This Week" },
-		{ value: "this_month", label: "This Month" },
-		{ value: "this_year", label: "This Year" },
-		{ value: "7d", label: "Last 7 Days" },
-		{ value: "30d", label: "Last 30 Days" },
-		{ value: "6m", label: "Last 6 Months" },
-		{ value: "12m", label: "Last 12 Months" },
-		{ value: "all", label: "All Time" }
-	];
 
 	const locationViews = [
 		{ value: "country", label: "Countries" },
@@ -63,11 +50,6 @@
 
 		dashboardData = data.data;
 		loading = false;
-	};
-
-	const handleRangeChange = (range: RangeSlug) => {
-		selectedRange = range;
-		fetchDashboard();
 	};
 
 	const handleLocationViewChange = (view: "country" | "region" | "city") => {
@@ -153,7 +135,7 @@
 	});
 </script>
 
-{#if loading}
+{#if projectLoading}
 	<div class="flex h-full items-center justify-center">
 		<div class="flex flex-col items-center gap-4">
 			<div class="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-primary"></div>
@@ -168,11 +150,6 @@
 		</div>
 	</div>
 {:else if projectsList.length === 0}
-	<!-- <CreateProjectModal
-			bind:open={showModal}
-			onOpenChange={(open) => (showModal = open)}
-			onSuccess={handleProjectCreated}
-		/> -->`
 	<div class="flex h-full items-center justify-center">
 		<div class="flex flex-col items-center gap-4">
 			<p class="text-muted-foreground">Waiting for project to be created...</p>

@@ -149,12 +149,6 @@
 			<Button onclick={() => fetchDashboard()}>Retry</Button>
 		</div>
 	</div>
-{:else if projectsList.length === 0}
-	<div class="flex h-full items-center justify-center">
-		<div class="flex flex-col items-center gap-4">
-			<p class="text-muted-foreground">Waiting for project to be created...</p>
-		</div>
-	</div>
 {:else if dashboardData && project}
 	<div class="flex h-full flex-col">
 		<main class="flex-1 p-4 md:p-6 lg:p-8">

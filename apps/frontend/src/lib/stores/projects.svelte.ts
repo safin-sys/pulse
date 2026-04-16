@@ -17,9 +17,9 @@ export const fetch_projects = async () => {
 		projects.loading = false;
 		return false;
 	}
-	
+
 	projects.data = data.data.projects;
-	projects.selected_project = data.data.projects[0]
+	projects.selected_project = data.data.projects[0];
 	projects.loading = false;
 	return true;
 };
@@ -41,13 +41,13 @@ export const create_project = async (name: string, domain: string) => {
 export const update_project = async (project_id: string, body: { name?: string }) => {
 	projects.error = "";
 	projects.loading = true;
-	const { data, error } = await api.update(project_id, body);
+	const { error } = await api.update(project_id, body);
 	if (error) {
 		projects.error = error?.message || "Something went wrong";
 		projects.loading = false;
 		return false;
 	}
-	projects.data = projects.data.map((p) => (p.id === project_id ? data.project : p));
+	fetch_projects();
 	projects.loading = false;
 	return true;
 };

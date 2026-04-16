@@ -19,6 +19,14 @@
 
 <div class="h-screen overflow-x-hidden bg-background font-sans text-foreground">
 	<Header />
-	{@render children?.()}
+	{#if projects.data.length}
+		{@render children?.()}
+	{:else}
+		<div class="flex h-full items-center justify-center">
+			<div class="flex flex-col items-center gap-4">
+				<p class="text-muted-foreground">Waiting for a project to be created...</p>
+			</div>
+		</div>
+	{/if}
 	<FloatingNav />
 </div>

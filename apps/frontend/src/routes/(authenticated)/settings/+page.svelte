@@ -1,5 +1,7 @@
 <script lang="ts">
-	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
+	import { Tabs, TabsContent, TabsList, TabsTrigger } from "$lib/components/ui/tabs";
+	import ProjectDetailsTab from "./project-details-tab.svelte";
+	import AllowDomainListTab from "./allow-domain-list-tab.svelte";
 </script>
 
 <svelte:head>
@@ -8,15 +10,23 @@
 
 <div class="flex h-full flex-col">
 	<main class="flex-1 p-4 md:p-6 lg:p-8">
-		<div class="mx-auto max-w-7xl space-y-6">
-			<Card>
-				<CardHeader>
-					<CardTitle>Settings</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p class="text-muted-foreground">Settings page coming soon...</p>
-				</CardContent>
-			</Card>
+		<div class="mx-auto max-w-md">
+			<Tabs value="project-details" class="w-full">
+				<TabsList class="justify-start bg-background">
+					<TabsTrigger class="cursor-pointer p-4" value="project-details"
+						>Project Details</TabsTrigger
+					>
+					<TabsTrigger class="cursor-pointer p-4" value="allow-domain-list"
+						>Allow Domain List</TabsTrigger
+					>
+				</TabsList>
+				<TabsContent value="project-details">
+					<ProjectDetailsTab />
+				</TabsContent>
+				<TabsContent value="allow-domain-list">
+					<AllowDomainListTab />
+				</TabsContent>
+			</Tabs>
 		</div>
 	</main>
 </div>

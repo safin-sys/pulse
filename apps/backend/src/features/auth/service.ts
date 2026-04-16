@@ -8,6 +8,7 @@ import {
     generate_reset_token,
     update_with_new_password,
     validate_reset_token,
+    get_user_by_id,
 } from "./repository";
 import { ForgotBody, LoginBody, ResetBody, SignupBody, User } from "./types";
 
@@ -238,7 +239,7 @@ const forgot = async (
     db: D1Database,
     data: ForgotBody,
     resend_api_key: string,
-    api_url: string
+    api_url: string,
 ): Promise<AResponse> => {
     const user = await check_user_exists(db, data.email);
 
@@ -304,4 +305,26 @@ const reset = async (db: D1Database, data: ResetBody): Promise<AResponse> => {
     return update_result;
 };
 
-export { signup, login, refresh, logout, forgot, reset };
+const get_me = async (db: D1Database, user_id: string): Promise<AResponse> => {
+    const user = await get_user_by_id(db, user_id);
+
+    if (!user) {
+        return {
+            success: false,
+            message: "User not found",
+            data: null,
+            error: null,
+            code: 404,
+        };
+    }
+
+    return {
+        success: true,
+        message: "User retrieved successfully",
+        data: user,
+        error: null,
+        code: 200,
+    };
+};
+
+export { signup, login, refresh, logout, forgot, reset, get_me };

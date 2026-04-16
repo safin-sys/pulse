@@ -2,6 +2,7 @@ import { hc } from "hono/client";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { AppType } from "@orbit/backend";
 import { auth } from "./auth";
+import { logout } from "$lib/stores/auth.svelte";
 
 let isRefreshing = false;
 let refreshSubscribers: Array<() => void> = [];
@@ -25,10 +26,12 @@ const tryRefreshToken = async (): Promise<void> => {
 	isRefreshing = true;
 
 	try {
-		const res = await auth.refresh()
+		const res = await auth.refresh();
 
 		if (res.error) throw new Error("Refresh failed");
 
+		onRefreshed();
+	} catch {
 		onRefreshed();
 	} finally {
 		isRefreshing = false;
@@ -37,12 +40,16 @@ const tryRefreshToken = async (): Promise<void> => {
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
 	try {
+		const url = typeof input === "string" ? input : input.toString();
+
 		const response = await fetch(input, {
 			...init,
 			credentials: "include"
 		});
 
-		if (response.status === 401) {
+		const isAuthRequest = url.includes("/auth/") && !url.includes("/auth/me");
+
+		if (response.status === 401 && !isAuthRequest) {
 			try {
 				await tryRefreshToken();
 				return fetch(input, {
@@ -50,6 +57,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promis
 					credentials: "include"
 				});
 			} catch {
+				await logout();
 				return response;
 			}
 		}

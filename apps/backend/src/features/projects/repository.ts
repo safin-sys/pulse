@@ -60,12 +60,12 @@ const get_project_by_id = async (
 const get_projects_by_owner_id = async (
     db: D1Database,
     owner_id: string,
-): Promise<{ id: string; name: string }[]> => {
+): Promise<{ id: string; name: string; domain: string; api_key: string }[]> => {
     const result = await db
-        .prepare("SELECT id, name, domain FROM projects WHERE owner_id = ? AND is_active = true")
+        .prepare("SELECT id, name, domain, api_key FROM projects WHERE owner_id = ? AND is_active = true")
         .bind(owner_id)
         .all();
-    return result.results as { id: string; name: string; domain: string }[];
+    return result.results as { id: string; name: string; domain: string; api_key: string }[];
 };
 
 const delete_project = async (db: D1Database, id: string, owner_id: string) => {

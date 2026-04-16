@@ -15,6 +15,7 @@ const corsConfig = {
         "https://pulsed.pages.dev",
         "https://pulsedev.pages.dev",
         "http://localhost:3000",
+        "http://192.168.0.100:3000",
     ],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],

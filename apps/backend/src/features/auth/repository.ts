@@ -123,6 +123,15 @@ const update_with_new_password = async (
     }
 };
 
+const get_user_by_id = async (db: D1Database, id: string) => {
+    return await db
+        .prepare(
+            "SELECT id, email, name, avatar_url FROM users WHERE id = ?",
+        )
+        .bind(id)
+        .first<User>();
+};
+
 export {
     check_user_exists,
     create_user,
@@ -130,4 +139,5 @@ export {
     generate_reset_token,
     validate_reset_token,
     update_with_new_password,
+    get_user_by_id,
 };

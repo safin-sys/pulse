@@ -32,7 +32,7 @@
 
 <Popover.Root bind:open={popover_open}>
 	<Popover.Trigger
-		class="group flex cursor-pointer items-center gap-2 rounded-md border border-white/10 bg-zinc-900/50 px-3 py-1.5 text-sm transition-colors hover:bg-white/5"
+		class="group flex cursor-pointer items-center gap-2 rounded-md border border-accent bg-background px-3 py-1.5 text-sm transition-colors hover:bg-accent"
 	>
 		<span class="text-xs font-medium text-zinc-300">{get_selected_range_label()}</span>
 		<svg
@@ -49,7 +49,7 @@
 	</Popover.Trigger>
 
 	<Popover.Content
-		class="w-[160px] rounded-xl border border-white/10 bg-zinc-900/95 p-1.5 shadow-2xl backdrop-blur-xl"
+		class="w-[160px] rounded-xl border border-accent bg-background p-1.5 shadow-2xl backdrop-blur-xl"
 		align="end"
 		sideOffset={8}
 	>
@@ -61,7 +61,7 @@
 							dashboard.range = range_item.value;
 							popover_open = false;
 						}}
-						class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-white/5 {range ===
+						class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent {range ===
 						range_item.value
 							? 'text-zinc-100'
 							: 'text-zinc-400'}"
@@ -83,7 +83,7 @@
 					</button>
 				{/each}
 				{#if i + 1 !== ranges.length}
-					<div class="my-1 h-px w-full bg-chart-5"></div>
+					<div class="my-1 h-px w-full bg-accent"></div>
 				{/if}
 			{/each}
 		</div>

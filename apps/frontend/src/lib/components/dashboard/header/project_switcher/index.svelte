@@ -27,7 +27,7 @@
 
 <Popover.Root bind:open={popover_open}>
 	<Popover.Trigger
-		class="group flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors hover:bg-white/5"
+		class="group flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors hover:bg-accent"
 	>
 		<span class="max-w-[140px] truncate font-medium text-zinc-200">{selected_project?.name}</span>
 		<span class="hidden max-w-[100px] truncate text-xs text-zinc-500 sm:inline"
@@ -47,7 +47,7 @@
 	</Popover.Trigger>
 
 	<Popover.Content
-		class="w-[300px] rounded-xl border border-white/10 bg-zinc-900/95 p-1.5 shadow-2xl backdrop-blur-xl"
+		class="w-[300px] rounded-xl border border-accent bg-background p-1.5 shadow-2xl backdrop-blur-xl"
 		align="start"
 		sideOffset={8}
 	>
@@ -61,13 +61,13 @@
 		{:else}
 			<!-- Projects List -->
 			<div class="flex flex-col py-1">
-				<div class="no-scrollbar flex max-h-[240px] flex-col overflow-y-auto">
+				<div class="no-scrollbar flex max-h-[240px] flex-col gap-2 overflow-y-auto">
 					{#each projects.data as project}
 						<button
 							onclick={() => handle_select_project(project)}
-							class="group/item flex w-full cursor-pointer flex-col items-start gap-0.5 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-white/5 {selected_project?.id ===
+							class="group/item flex w-full cursor-pointer flex-col items-start gap-0.5 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-accent {selected_project?.id ===
 							project.id
-								? 'bg-white/5'
+								? 'bg-accent'
 								: ''}"
 						>
 							<div class="flex w-full items-center justify-between">
@@ -97,7 +97,7 @@
 				<!-- Create New Project -->
 				<button
 					onclick={open_create_form}
-					class="mt-1 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-white/5"
+					class="mt-1 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-accent"
 				>
 					<span class="flex h-5 w-5 items-center justify-center rounded-md border border-zinc-700">
 						<svg

@@ -27,16 +27,22 @@
 		const success = await update_project(projects.selected_project.id, { name });
 		saving = false;
 		if (success) {
-			toast.success("Project name updated");
+			toast.success("Project name updated", {
+				position: "top-center"
+			});
 		} else {
-			toast.error("Failed to update project name");
+			toast.error("Failed to update project name", {
+				position: "top-center"
+			});
 		}
 	};
 
 	const handle_copy_api_key = async () => {
 		if (!projects.selected_project?.api_key) return;
 		await navigator.clipboard.writeText(projects.selected_project.api_key);
-		toast.success("API key copied to clipboard");
+		toast.success("API key copied to clipboard", {
+			position: "top-center"
+		});
 	};
 
 	const handle_delete = async () => {
@@ -46,9 +52,13 @@
 		deleting = false;
 		showDeleteDialog = false;
 		if (success) {
-			toast.success("Project deleted");
+			toast.success("Project deleted", {
+				position: "top-center"
+			});
 		} else {
-			toast.error("Failed to delete project");
+			toast.error("Failed to delete project", {
+				position: "top-center"
+			});
 		}
 	};
 </script>

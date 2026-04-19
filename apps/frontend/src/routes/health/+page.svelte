@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FloatingNav from '$lib/components/floating-nav.svelte';
+	import FloatingNav from '$lib/components/common/nav.svelte';
 
 	let props = $props();
 </script>

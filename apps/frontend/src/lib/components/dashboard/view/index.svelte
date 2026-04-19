@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Chart from "$lib/components/chart.svelte";
+	import Chart from "$lib/components/dashboard/view/chart.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
-	import type { DashboardResponse, RangeSlug } from "$lib/types/dashboard";
+	import type { DashboardResponse } from "$lib/types/dashboard";
 	import type { Project } from "$lib/types/project";
 
 	interface Props {

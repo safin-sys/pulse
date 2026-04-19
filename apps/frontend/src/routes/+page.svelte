@@ -1,6 +1,6 @@
 <script lang="ts">
-	import FloatingNav from "$lib/components/floating-nav.svelte";
-	import SaturnCanvas from "$lib/components/saturn-canvas.svelte";
+	import FloatingNav from "$lib/components/common/nav.svelte";
+	import SaturnCanvas from "$lib/components/home/saturn-canvas.svelte";
 	import { Button } from "$lib/components/ui/button";
 </script>
 

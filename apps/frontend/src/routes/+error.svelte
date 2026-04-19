@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/state';
-	import FloatingNav from '$lib/components/floating-nav.svelte';
+	import FloatingNav from '$lib/components/common/nav.svelte';
 
 	const status = page.status;
 	const message = page.error?.message ?? 'Something went wrong';

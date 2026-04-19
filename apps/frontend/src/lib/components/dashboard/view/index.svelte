@@ -1,33 +1,11 @@
 <script lang="ts">
+	import { untrack } from "svelte";
 	import Chart from "$lib/components/dashboard/view/chart.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
-	import type { DashboardResponse } from "$lib/types/dashboard";
-	import type { Project } from "$lib/types/project";
+	import { dashboard, fetch_dashboard, handle_params } from "$lib/stores/dashboard.svelte";
 
-	interface Props {
-		data: DashboardResponse | null;
-		loading: boolean;
-		error: string | null;
-		project: Project | null;
-		locationView: "country" | "region" | "city";
-		deviceView: "browser" | "os" | "device";
-		onLocationViewChange: (view: "country" | "region" | "city") => void;
-		onDeviceViewChange: (view: "browser" | "os" | "device") => void;
-		onRetry?: () => void;
-	}
-
-	let {
-		data,
-		loading,
-		error,
-		project,
-		locationView,
-		deviceView,
-		onLocationViewChange,
-		onDeviceViewChange,
-		onRetry
-	}: Props = $props();
+	let { data, error, loading } = $derived(dashboard);
 
 	const locationViews = [
 		{ value: "country", label: "Countries" },
@@ -79,7 +57,7 @@
 		return emojis[code] || "🌍";
 	};
 
-	const getDeviceEmoji = (name: string, type: "browser" | "os" | "device"): string => {
+	const getDeviceEmoji = (name: string, type: "browser" | "os" | "device" | undefined): string => {
 		if (type === "browser") {
 			const emojis: Record<string, string> = {
 				Chrome: "🅱️",
@@ -106,6 +84,11 @@
 		};
 		return emojis[name] || "📱";
 	};
+
+	$effect(() => {
+		JSON.stringify(dashboard.params); // track params only
+		untrack(() => fetch_dashboard());
+	});
 </script>
 
 {#if loading}
@@ -119,12 +102,10 @@
 	<div class="flex h-full items-center justify-center">
 		<div class="flex flex-col items-center gap-4">
 			<p class="text-destructive">{error}</p>
-			{#if onRetry}
-				<Button onclick={onRetry}>Retry</Button>
-			{/if}
+			<Button onclick={() => fetch_dashboard()}>Retry</Button>
 		</div>
 	</div>
-{:else if data && project}
+{:else if data}
 	<div class="flex h-full flex-col">
 		<main class="flex-1 p-4 md:p-6 lg:p-8">
 			<div class="mx-auto max-w-7xl space-y-6">
@@ -251,9 +232,9 @@
 									<div class="flex gap-1">
 										{#each locationViews as view}
 											<button
-												onclick={() => onLocationViewChange(view.value)}
-												class="rounded-md px-2 py-1 text-xs transition-colors {locationView ===
-												view.value
+												onclick={() => handle_params("locationView", view.value)}
+												class="rounded-md px-2 py-1 text-xs transition-colors {dashboard.params
+													.locationView === view.value
 													? 'bg-primary text-primary-foreground'
 													: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 											>
@@ -303,9 +284,9 @@
 									<div class="flex gap-1">
 										{#each deviceViews as view}
 											<button
-												onclick={() => onDeviceViewChange(view.value)}
-												class="rounded-md px-2 py-1 text-xs transition-colors {deviceView ===
-												view.value
+												onclick={() => handle_params("deviceView", view.value)}
+												class="rounded-md px-2 py-1 text-xs transition-colors {dashboard.params
+													.deviceView === view.value
 													? 'bg-primary text-primary-foreground'
 													: 'bg-secondary text-muted-foreground hover:bg-accent'}"
 											>
@@ -327,7 +308,9 @@
 										{@const pct = device.percentage}
 										<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 											<div class="flex items-center gap-3">
-												<span class="text-lg">{getDeviceEmoji(name, deviceView)}</span>
+												<span class="text-lg"
+													>{getDeviceEmoji(name, dashboard.params.deviceView)}</span
+												>
 												<span class="text-sm">{name}</span>
 											</div>
 											<div class="flex items-center gap-3">

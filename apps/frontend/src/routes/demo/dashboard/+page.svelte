@@ -5,7 +5,6 @@
 	import { projects as projectsStore } from "$lib/stores/projects.svelte";
 	import type { DashboardResponse, RangeSlug, DashboardQueryParams } from "$lib/types/dashboard";
 
-	let projectsList = $derived(projectsStore.data);
 	let project = $derived(projectsStore.selected_project);
 	let projectLoading = $derived(projectsStore.loading);
 	let dashboardData: DashboardResponse | null = $state(null);

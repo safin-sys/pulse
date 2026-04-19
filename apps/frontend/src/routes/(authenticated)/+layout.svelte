@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 	import Header from "$lib/components/dashboard/header/index.svelte";
 	import FloatingNav from "$lib/components/common/nav.svelte";
 	import { projects } from "$lib/stores/projects.svelte";
@@ -7,7 +7,7 @@
 	let { children } = $props();
 
 	let pageTitle = $derived(() => {
-		const pathname = $page.url.pathname;
+		const pathname = page.url.pathname;
 		if (pathname === "/settings") return "Settings";
 		return "Dashboard";
 	});

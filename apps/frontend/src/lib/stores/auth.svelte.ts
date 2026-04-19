@@ -17,7 +17,7 @@ export const init = async () => {
 			await logout();
 		}
 	} else {
-		auth.user = data.user;
+		auth.user = data.data;
 		auth.is_authenticated = true;
 	}
 	auth.loading = false;

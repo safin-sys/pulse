@@ -1,8 +1,10 @@
 import type { DashboardQueryParams, DashboardResponse, RangeSlug } from "$lib/types/dashboard";
 import { projects } from "./projects.svelte";
 import { dashboard as api } from "$lib/api/dashboard";
+import { seed_dashboard } from "$lib/helpers/seed";
 
 export let dashboard = $state({
+	demo: false,
 	params: {
 		range: "today" as RangeSlug,
 		pageView: undefined,
@@ -29,6 +31,12 @@ export const fetch_dashboard = async () => {
 	dashboard.loading = dashboard.data === null;
 	dashboard.error = "";
 
+	if (dashboard.demo) {
+		dashboard.data = seed_dashboard(dashboard.params, selected_project.id);
+		dashboard.loading = false;
+		return;
+	}
+
 	const { data, error: err } = await api.get(selected_project.domain, dashboard.params);
 	if (err) {
 		dashboard.error = err.message || "Failed to fetch dashboard";
@@ -46,4 +54,25 @@ export const handle_params = <K extends keyof DashboardQueryParams>(
 ) => {
 	dashboard.params[field] = value;
 	// fetch_dashboard();
+};
+
+export const reset_dashboard = () => {
+	dashboard.demo = false;
+	dashboard.params = {
+		range: "today" as RangeSlug,
+		pageView: undefined,
+		sourceView: undefined,
+		locationView: "country",
+		deviceView: "browser",
+		hostname: undefined,
+		page: undefined,
+		referrer: undefined,
+		country: undefined,
+		device: undefined,
+		browser: undefined,
+		os: undefined
+	};
+	dashboard.data = null;
+	dashboard.loading = true;
+	dashboard.error = "";
 };

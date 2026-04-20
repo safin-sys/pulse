@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { toast } from "svelte-sonner";
 	import { projects, update_project, delete_project } from "$lib/stores/projects.svelte";
+	import { dashboard } from "$lib/stores/dashboard.svelte";
+	let { demo } = $derived(dashboard);
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
@@ -22,6 +24,12 @@
 		}
 	});
 	const handle_save_name = async () => {
+		if (demo) {
+			toast.error("Not available in demo mode", {
+				position: "top-center"
+			});
+			return;
+		}
 		if (!projects.selected_project || name === projects.selected_project.name) return;
 		saving = true;
 		const success = await update_project(projects.selected_project.id, { name });
@@ -46,6 +54,13 @@
 	};
 
 	const handle_delete = async () => {
+		if (demo) {
+			toast.error("Not available in demo mode", {
+				position: "top-center"
+			});
+			showDeleteDialog = false;
+			return;
+		}
 		if (!projects.selected_project) return;
 		deleting = true;
 		const success = await delete_project(projects.selected_project.id);

@@ -44,4 +44,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/frontend/.svelte-kit/cloudflare --project-name=pulsed --branch=main
+          command: pages deploy apps/frontend/.svelte-kit/cloudflare --project-name=orbit --branch=main

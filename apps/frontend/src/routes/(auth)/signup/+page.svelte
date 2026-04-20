@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FloatingNav from "$lib/components/floating-nav.svelte";
+	import FloatingNav from "$lib/components/common/nav.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { goto } from "$app/navigation";

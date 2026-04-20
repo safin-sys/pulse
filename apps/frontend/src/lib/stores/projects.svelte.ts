@@ -1,4 +1,6 @@
 import { projects as api } from "$lib/api/projects";
+import { dashboard } from "./dashboard.svelte";
+import { seed_projects } from "$lib/helpers/seed";
 import type { Project } from "$lib/types/project";
 
 export let projects = $state({
@@ -11,6 +13,14 @@ export let projects = $state({
 export const fetch_projects = async () => {
 	projects.error = "";
 	projects.loading = true;
+
+	if (dashboard.demo) {
+		projects.data = seed_projects(1);
+		projects.selected_project = projects.data[0];
+		projects.loading = false;
+		return true;
+	}
+
 	const { data, error } = await api.getAll();
 	if (error) {
 		projects.error = error?.message || "Something went wrong";

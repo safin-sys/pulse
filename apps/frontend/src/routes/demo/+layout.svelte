@@ -3,6 +3,9 @@
 	import Header from "$lib/components/dashboard/header/index.svelte";
 	import FloatingNav from "$lib/components/common/nav.svelte";
 	import { projects } from "$lib/stores/projects.svelte";
+	import { dashboard } from "$lib/stores/dashboard.svelte";
+
+	dashboard.demo = true;
 
 	let { children } = $props();
 

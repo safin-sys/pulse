@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { dashboard } from "$lib/stores/dashboard.svelte";
+	import { dashboard, handle_params } from "$lib/stores/dashboard.svelte";
 	import type { RangeSlug } from "$lib/types/dashboard";
 	import { Popover } from "bits-ui";
 
 	let popover_open = $state(false);
 
-	let { range } = $derived(dashboard);
+	let { range } = $derived(dashboard.params);
 
 	const ranges: { value: RangeSlug; label: string }[][] = [
 		[
@@ -58,7 +58,7 @@
 				{#each range_categories as range_item}
 					<button
 						onclick={() => {
-							dashboard.range = range_item.value;
+							handle_params("range", range_item.value);
 							popover_open = false;
 						}}
 						class="flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent {range ===

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { projects } from "$lib/stores/projects.svelte";
+	import { dashboard } from "$lib/stores/dashboard.svelte";
 	import { Popover } from "bits-ui";
 	import CreateProjectForm from "./create_project_form.svelte";
 	import type { Project } from "$lib/types/project";
+	import { toast } from "svelte-sonner";
 
 	let popover_open = $state(false);
 	let selected_project = $derived(projects.selected_project);
+	let { demo } = $derived(dashboard);
 
 	// create project form logic ---------
 	let create_open = $state(false);
@@ -13,6 +16,12 @@
 	let new_project_domain = $state("");
 
 	const open_create_form = () => {
+		if (demo) {
+			toast.error("Creating projects is not available in demo mode", {
+				position: "top-center"
+			});
+			return;
+		}
 		create_open = true;
 		new_project_name = "";
 		new_project_domain = "";

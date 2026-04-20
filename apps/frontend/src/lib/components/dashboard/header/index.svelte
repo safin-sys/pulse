@@ -5,9 +5,12 @@
 	import Modal from "./modal.svelte";
 	import ProjectSwitcher from "./project_switcher/index.svelte";
 	import Range from "./range.svelte";
+	import { toast } from "svelte-sonner";
+	import { dashboard } from "$lib/stores/dashboard.svelte";
 	import { onMount } from "svelte";
 
 	let modal = $state(false);
+	let { demo } = $derived(dashboard);
 
 	onMount(async () => {
 		await fetch_projects();
@@ -15,6 +18,16 @@
 			modal = true;
 		}
 	});
+
+	const handle_create_project = () => {
+		if (demo) {
+			toast.error("Creating projects is not available in demo mode", {
+				position: "top-center"
+			});
+			return;
+		}
+		modal = true;
+	};
 </script>
 
 <header class="sticky top-0 z-40 border-b border-accent bg-background backdrop-blur-md">
@@ -36,7 +49,7 @@
 			<Range />
 		{:else}
 			<!-- Create new project button -->
-			<Button variant="outline" disabled={projects.loading} onclick={() => (modal = true)}
+			<Button variant="outline" disabled={projects.loading} onclick={handle_create_project}
 				>Create Project</Button
 			>
 		{/if}

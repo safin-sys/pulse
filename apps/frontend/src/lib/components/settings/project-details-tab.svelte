@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { toast } from "svelte-sonner";
 	import { projects, update_project, delete_project } from "$lib/stores/projects.svelte";
+	import { dashboard } from "$lib/stores/dashboard.svelte";
+	let { demo } = $derived(dashboard);
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
@@ -22,33 +24,56 @@
 		}
 	});
 	const handle_save_name = async () => {
+		if (demo) {
+			toast.error("Not available in demo mode", {
+				position: "top-center"
+			});
+			return;
+		}
 		if (!projects.selected_project || name === projects.selected_project.name) return;
 		saving = true;
 		const success = await update_project(projects.selected_project.id, { name });
 		saving = false;
 		if (success) {
-			toast.success("Project name updated");
+			toast.success("Project name updated", {
+				position: "top-center"
+			});
 		} else {
-			toast.error("Failed to update project name");
+			toast.error("Failed to update project name", {
+				position: "top-center"
+			});
 		}
 	};
 
 	const handle_copy_api_key = async () => {
 		if (!projects.selected_project?.api_key) return;
 		await navigator.clipboard.writeText(projects.selected_project.api_key);
-		toast.success("API key copied to clipboard");
+		toast.success("API key copied to clipboard", {
+			position: "top-center"
+		});
 	};
 
 	const handle_delete = async () => {
+		if (demo) {
+			toast.error("Not available in demo mode", {
+				position: "top-center"
+			});
+			showDeleteDialog = false;
+			return;
+		}
 		if (!projects.selected_project) return;
 		deleting = true;
 		const success = await delete_project(projects.selected_project.id);
 		deleting = false;
 		showDeleteDialog = false;
 		if (success) {
-			toast.success("Project deleted");
+			toast.success("Project deleted", {
+				position: "top-center"
+			});
 		} else {
-			toast.error("Failed to delete project");
+			toast.error("Failed to delete project", {
+				position: "top-center"
+			});
 		}
 	};
 </script>

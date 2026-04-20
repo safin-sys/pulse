@@ -12,8 +12,8 @@ const app = new Hono();
 
 const corsConfig = {
     origin: [
+        "https://orbit.pages.dev",
         "https://pulsed.pages.dev",
-        "https://pulsedev.pages.dev",
         "http://localhost:3000",
         "http://192.168.0.100:3000",
     ],

@@ -25,6 +25,12 @@
 		return num.toString();
 	};
 
+	const formatDate = (dateStr: string) => {
+		const date = new Date(dateStr);
+		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		return `${monthNames[date.getMonth()]} ${date.getDate()}`;
+	};
+
 	const getCountryName = (code: string): string => {
 		const countryNames: Record<string, string> = {
 			US: "United States",
@@ -109,56 +115,21 @@
 	<div class="flex h-full flex-col">
 		<main class="flex-1 p-4 md:p-6 lg:p-8">
 			<div class="mx-auto max-w-7xl space-y-6">
-				<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					<Card>
-						<CardHeader>
-							<CardTitle class="text-sm font-medium text-muted-foreground">Total Visitors</CardTitle
-							>
-						</CardHeader>
-						<CardContent>
-							<div class="text-3xl font-bold tracking-tight">
-								{formatNumber(data.summary.visitors)}
-							</div>
-							<p class="mt-1 text-xs text-muted-foreground">
-								{data.range.from} - {data.range.to}
-							</p>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader>
-							<CardTitle class="text-sm font-medium text-muted-foreground">Total Entries</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div class="text-3xl font-bold tracking-tight">
-								{formatNumber(data.summary.entries)}
-							</div>
-							<p class="mt-1 text-xs text-muted-foreground">Page views</p>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader>
-							<CardTitle class="text-sm font-medium text-muted-foreground">Sessions</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div class="text-3xl font-bold tracking-tight">
-								{formatNumber(data.summary.sessions)}
-							</div>
-							<p class="mt-1 text-xs text-muted-foreground">Unique sessions</p>
-						</CardContent>
-					</Card>
-				</section>
-
-				<section>
-					<Card>
-						<CardHeader>
-							<CardTitle>Visitors Over Time</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div class="h-[300px]">
-								<Chart data={data.chart} />
-							</div>
-						</CardContent>
-					</Card>
+				<section class="relative h-[500px]">
+					<Chart data={data.chart} className="mt-16" />
+					<div class="absolute right-0 top-[-64px] z-10 flex flex-col gap-1 border-2 border-accent p-2 rounded-md bg-background/10 backdrop-blur-md">
+						<div class="flex gap-4 text-sm text-muted-foreground">
+							<span>Visitors</span>
+							<span class="text-foreground">{formatNumber(data.summary.visitors)}</span>
+							<span>Views</span>
+							<span class="text-foreground">{formatNumber(data.summary.entries)}</span>
+							<span>Sessions</span>
+							<span class="text-foreground">{formatNumber(data.summary.sessions)}</span>
+						</div>
+						<div class="text-sm text-muted-foreground">
+							{formatDate(data.range.from)} - {formatDate(data.range.to)}
+						</div>
+					</div>
 				</section>
 
 				<div class="grid gap-6 lg:grid-cols-2">

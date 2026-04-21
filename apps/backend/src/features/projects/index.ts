@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import response from "../../utils/response";
 import { CreateProjectBodySchema, UpdateProjectBodySchema } from "./types";
-import { create, update, getAll, deleteOne } from "./service";
+import { create, update, getAll, deleteOne, rotateApiKey } from "./service";
 import { zValidator } from "@hono/zod-validator";
 import { getCookie } from "hono/cookie";
 
@@ -150,6 +150,44 @@ const app = new Hono<{ Bindings: Bindings }>()
         const projectId = c.req.param("projectId");
 
         const res = await deleteOne(c.env.DB, projectId, payload.id);
+
+        return response(c, res);
+    } catch (error) {
+        return response(c, {
+            success: false,
+            message: "Invalid or expired token",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 401,
+        });
+    }
+})
+.post("/:projectId/rotate-api-key", async (c) => {
+    const token = getCookie(c, "access_token");
+
+    if (!token) {
+        return response(c, {
+            success: false,
+            message: "Authorization token is required",
+            data: null,
+            error: null,
+            code: 401,
+        });
+    }
+
+    try {
+        const payload = (await verify(
+            token,
+            c.env.ACCESS_TOKEN_SECRET,
+            "HS256"
+        )) as unknown as {
+            id: string;
+            role: string;
+        };
+
+        const projectId = c.req.param("projectId");
+
+        const res = await rotateApiKey(c.env.DB, projectId, payload.id);
 
         return response(c, res);
     } catch (error) {

@@ -6,6 +6,7 @@ import {
     get_project_by_id,
     get_projects_by_owner_id,
     delete_project,
+    rotate_api_key,
 } from "./repository";
 
 const create = async (
@@ -20,7 +21,7 @@ const create = async (
         owner_id,
         name: data.name,
         domain: data.domain,
-        api_key: `an_${generateToken()}`,
+        api_key: `orb_${generateToken()}`,
         created_at: now,
         updated_at: now,
         is_active: true,
@@ -179,4 +180,54 @@ const deleteOne = async (
     }
 };
 
-export { create, update, getAll, deleteOne };
+const rotateApiKey = async (
+    db: D1Database,
+    project_id: string,
+    owner_id: string,
+): Promise<AResponse> => {
+    try {
+        const project = await get_project_by_id(db, project_id);
+        if (!project) {
+            return {
+                success: false,
+                message: "Project not found",
+                data: null,
+                error: null,
+                code: 404,
+            };
+        }
+
+        if (project.owner_id !== owner_id) {
+            return {
+                success: false,
+                message: "Unauthorized to rotate API key for this project",
+                data: null,
+                error: null,
+                code: 403,
+            };
+        }
+
+        const new_api_key = `orb_${generateToken()}`;
+        await rotate_api_key(db, project_id, owner_id, new_api_key);
+
+        return {
+            success: true,
+            message: "API key rotated successfully",
+            data: {
+                api_key: new_api_key,
+            },
+            error: null,
+            code: 200,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Failed to rotate API key",
+            data: null,
+            error: error instanceof Error ? error.message : "Unknown error",
+            code: 500,
+        };
+    }
+};
+
+export { create, update, getAll, deleteOne, rotateApiKey };

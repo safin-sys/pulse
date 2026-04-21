@@ -37,7 +37,7 @@ const deleteOne = async (projectId: string) => {
     return { data: null, error: await res.json() };
 };
 
-const rotateApiKey = async (projectId: string) => {
+const rotate_api_key = async (projectId: string) => {
     const res = await api.projects[":projectId"]["rotate-api-key"].$post({
         param: { projectId }
     });
@@ -52,5 +52,5 @@ export const projects = {
     update,
     getAll,
     delete: deleteOne,
-    rotateApiKey,
+    rotate_api_key,
 };

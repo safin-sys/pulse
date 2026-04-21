@@ -1,4 +1,4 @@
-<div class="flex items-center gap-2.5">
+<a href="/" class="flex items-center gap-2.5">
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -21,4 +21,4 @@
         />
     </svg>
     <span class="text-base font-semibold tracking-tight text-zinc-100">Orbit</span>
-</div>
+</a>

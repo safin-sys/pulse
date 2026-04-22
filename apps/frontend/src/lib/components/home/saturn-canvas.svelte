@@ -4,6 +4,8 @@
 	let canvas: HTMLCanvasElement;
 	let animationId: number;
 
+	let { centered }: { centered?: Boolean } = $props();
+
 	interface Particle {
 		angle: number;
 		speed: number;
@@ -37,12 +39,12 @@
 
 			if (mobile) {
 				SR = Math.min(W, H) * 0.32;
-				cx = W * 0.9;
-				cy = H * 0.58;
+				cx = centered ? W * 0.5 : W * 0.9;
+				cy = centered ? H * 0.5 : H * 0.58;
 			} else {
 				SR = Math.min(H * 0.28, W * 0.18);
-				cx = W * 0.73;
-				cy = H * 0.5;
+				cx = centered ? W * 0.5 : W * 0.73;
+				cy = centered ? H * 0.5 : H * 0.5;
 			}
 
 			buildParticles();

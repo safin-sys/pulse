@@ -75,10 +75,18 @@ const delete_project = async (db: D1Database, id: string, owner_id: string) => {
         .run();
 };
 
+const rotate_api_key = async (db: D1Database, id: string, owner_id: string, new_api_key: string) => {
+    return await db
+        .prepare("UPDATE projects SET api_key = ?, updated_at = ? WHERE id = ? AND owner_id = ?")
+        .bind(new_api_key, Date.now(), id, owner_id)
+        .run();
+};
+
 export {
     create_project,
     update_project,
     get_project_by_id,
     get_projects_by_owner_id,
     delete_project,
+    rotate_api_key,
 };

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { toast } from "svelte-sonner";
 	import { projects, update_project, delete_project } from "$lib/stores/projects.svelte";
+	import { projects as projectsApi } from "$lib/api/projects";
 	import { dashboard } from "$lib/stores/dashboard.svelte";
 	let { demo } = $derived(dashboard);
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
@@ -14,10 +15,15 @@
 		DialogClose
 	} from "$lib/components/ui/dialog";
 	import { Separator } from "$lib/components/ui/separator";
+	import { CopyIcon, RedoIcon } from "@hugeicons/core-free-icons";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+
 	let name = $state(projects.selected_project?.name || "");
 	let saving = $state(false);
 	let deleting = $state(false);
+	let rotating = $state(false);
 	let showDeleteDialog = $state(false);
+	let showRotateKeyDialog = $state(false);
 	$effect(() => {
 		if (projects.selected_project) {
 			name = projects.selected_project.name;
@@ -51,6 +57,31 @@
 		toast.success("API key copied to clipboard", {
 			position: "top-center"
 		});
+	};
+
+	const handle_rotate_api_key = async () => {
+		if (demo) {
+			toast.error("Not available in demo mode", {
+				position: "top-center"
+			});
+			showRotateKeyDialog = false;
+			return;
+		}
+		if (!projects.selected_project) return;
+		rotating = true;
+		const { data, error } = await projectsApi.rotate_api_key(projects.selected_project.id);
+		rotating = false;
+		showRotateKeyDialog = false;
+		if (data?.success && data.data?.api_key) {
+			projects.selected_project.api_key = data.data.api_key;
+			toast.success("API key rotated successfully", {
+				position: "top-center"
+			});
+		} else {
+			toast.error(error?.message || "Failed to rotate API key", {
+				position: "top-center"
+			});
+		}
 	};
 
 	const handle_delete = async () => {
@@ -122,14 +153,29 @@
 	<Card>
 		<CardHeader><CardTitle>API Key</CardTitle></CardHeader>
 		<CardContent>
-			<div class="flex gap-2">
+			<div class="mb-2 flex gap-2">
 				<Input
 					type="text"
 					value={projects.selected_project?.api_key || ""}
 					readonly
 					class="h-8 flex-1 font-mono text-xs"
 				/>
-				<Button onclick={handle_copy_api_key} variant="outline">Copy</Button>
+			</div>
+			<p class="mb-4 text-xs text-muted-foreground">
+				This key is public. Only requests from your domain and allowed domains will be accepted.
+			</p>
+			<div class="flex gap-2">
+				<Button onclick={() => (showRotateKeyDialog = true)} variant="outline">
+					<HugeiconsIcon
+						icon={RedoIcon}
+						strokeWidth={2}
+						class={`size-4 ${rotating ?? "animate-spin"}`}
+					/> Rotate Key
+				</Button>
+				<Button onclick={handle_copy_api_key} variant="outline">
+					<HugeiconsIcon icon={CopyIcon} strokeWidth={2} class="size-4" />
+					Copy
+				</Button>
 			</div>
 		</CardContent>
 	</Card>
@@ -145,6 +191,22 @@
 		</CardContent>
 	</Card>
 </div>
+<Dialog bind:open={showRotateKeyDialog}>
+	<DialogContent class="bg-black p-4">
+		<DialogTitle>Rotate API Key</DialogTitle>
+		<DialogDescription>
+			Are you sure you want to rotate your API key? This will invalidate your current key and you
+			will need to update it in your scripts.
+		</DialogDescription>
+		<Separator class="my-2" />
+		<div class="flex justify-end gap-2">
+			<DialogClose><Button variant="outline">Cancel</Button></DialogClose>
+			<Button onclick={handle_rotate_api_key} variant="destructive" disabled={rotating}>
+				{rotating ? "Rotating..." : "Rotate"}
+			</Button>
+		</div>
+	</DialogContent>
+</Dialog>
 <Dialog bind:open={showDeleteDialog}>
 	<DialogContent class="bg-black p-4">
 		<DialogTitle>Delete Project</DialogTitle>

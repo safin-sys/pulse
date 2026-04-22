@@ -37,9 +37,20 @@ const deleteOne = async (projectId: string) => {
     return { data: null, error: await res.json() };
 };
 
+const rotate_api_key = async (projectId: string) => {
+    const res = await api.projects[":projectId"]["rotate-api-key"].$post({
+        param: { projectId }
+    });
+    if (res.ok) {
+        return { data: await res.json(), error: null };
+    }
+    return { data: null, error: await res.json() };
+};
+
 export const projects = {
     create,
     update,
     getAll,
     delete: deleteOne,
+    rotate_api_key,
 };

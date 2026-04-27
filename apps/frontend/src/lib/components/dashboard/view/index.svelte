@@ -7,7 +7,10 @@
 	import { format_number } from "$lib/helpers/format_number";
 	import { format_date } from "$lib/helpers/format_date";
 	import { get_country_name } from "$lib/helpers/get_country_name";
-	import { get_device_emoji } from "$lib/helpers/get_device_emoji";
+	import { get_country_flag } from "$lib/helpers/get_country_flag";
+	import { get_device_icon } from "$lib/helpers/get_device_icon";
+	import { HugeiconsIcon } from "@hugeicons/svelte";
+	import { Computer, Mobile, Tablet } from "@hugeicons/core-free-icons";
 
 	let { data, error, loading } = $derived(dashboard);
 
@@ -22,22 +25,6 @@
 		{ value: "os", label: "Operating Systems" },
 		{ value: "device", label: "Devices" }
 	] as const;
-
-	const getCountryEmoji = (code: string): string => {
-		const emojis: Record<string, string> = {
-			US: "🇺🇸",
-			GB: "🇬🇧",
-			DE: "🇩🇪",
-			FR: "🇫🇷",
-			JP: "🇯🇵",
-			IN: "🇮🇳",
-			BR: "🇧🇷",
-			CA: "🇨🇦",
-			AU: "🇦🇺",
-			CN: "🇨🇳"
-		};
-		return emojis[code] || "🌍";
-	};
 
 	$effect(() => {
 		JSON.stringify(dashboard.params); // track params only
@@ -63,9 +50,11 @@
 	<div class="flex h-full flex-col">
 		<main class="flex-1 p-4 md:p-6 lg:p-8">
 			<div class="mx-auto max-w-7xl space-y-6">
-				<section class="relative h-[500px]">
+				<section class="relative h-125">
 					<Chart data={data.chart} className="mt-16" />
-					<div class="absolute right-0 top-[-64px] z-10 flex flex-col gap-1 border-2 border-accent p-2 rounded-md bg-background/10 backdrop-blur-md">
+					<div
+						class="absolute -top-16 right-0 z-10 flex flex-col gap-1 rounded-md border-2 border-accent bg-background/10 p-2 backdrop-blur-md"
+					>
 						<div class="flex gap-4 text-sm text-muted-foreground">
 							<span>Visitors</span>
 							<span class="text-foreground">{format_number(data.summary.visitors)}</span>
@@ -171,7 +160,11 @@
 										{@const visitors = loc.visitors}
 										<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 											<div class="flex items-center gap-3">
-												<span class="text-lg">{getCountryEmoji(countryCode)}</span>
+												<img
+													src={get_country_flag(countryCode)}
+													alt={countryCode}
+													class="h-4 w-6 object-cover"
+												/>
 												<span class="text-sm">
 													{#if loc.region && loc.city}
 														{loc.city}, {loc.region}
@@ -227,9 +220,23 @@
 										{@const pct = device.percentage}
 										<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 											<div class="flex items-center gap-3">
-												<span class="text-lg"
-													>{get_device_emoji(name, dashboard.params.deviceView)}</span
-												>
+												{#if dashboard.params.deviceView === "device"}
+													{#if name === "Desktop"}
+														<HugeiconsIcon icon={Computer} strokeWidth={2} class="size-4" />
+													{/if}
+													{#if name === "Mobile"}
+														<HugeiconsIcon icon={Mobile} strokeWidth={2} class="size-4" />
+													{/if}
+													{#if name === "Tablet"}
+														<HugeiconsIcon icon={Tablet} strokeWidth={2} class="size-4" />
+													{/if}
+												{:else}
+													<img
+														src={get_device_icon(name, dashboard.params.deviceView)}
+														alt={name}
+														class="h-6 w-6"
+													/>
+												{/if}
 												<span class="text-sm">{name}</span>
 											</div>
 											<div class="flex items-center gap-3">

@@ -4,6 +4,10 @@
 	import { Button } from "$lib/components/ui/button";
 	import Card, { CardHeader, CardTitle, CardContent } from "$lib/components/ui/card";
 	import { dashboard, fetch_dashboard, handle_params } from "$lib/stores/dashboard.svelte";
+	import { format_number } from "$lib/helpers/format_number";
+	import { format_date } from "$lib/helpers/format_date";
+	import { get_country_name } from "$lib/helpers/get_country_name";
+	import { get_device_emoji } from "$lib/helpers/get_device_emoji";
 
 	let { data, error, loading } = $derived(dashboard);
 
@@ -19,34 +23,6 @@
 		{ value: "device", label: "Devices" }
 	] as const;
 
-	const formatNumber = (num: number): string => {
-		if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-		if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-		return num.toString();
-	};
-
-	const formatDate = (dateStr: string) => {
-		const date = new Date(dateStr);
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		return `${monthNames[date.getMonth()]} ${date.getDate()}`;
-	};
-
-	const getCountryName = (code: string): string => {
-		const countryNames: Record<string, string> = {
-			US: "United States",
-			GB: "United Kingdom",
-			DE: "Germany",
-			FR: "France",
-			JP: "Japan",
-			IN: "India",
-			BR: "Brazil",
-			CA: "Canada",
-			AU: "Australia",
-			CN: "China"
-		};
-		return countryNames[code] || code;
-	};
-
 	const getCountryEmoji = (code: string): string => {
 		const emojis: Record<string, string> = {
 			US: "🇺🇸",
@@ -61,34 +37,6 @@
 			CN: "🇨🇳"
 		};
 		return emojis[code] || "🌍";
-	};
-
-	const getDeviceEmoji = (name: string, type: "browser" | "os" | "device" | undefined): string => {
-		if (type === "browser") {
-			const emojis: Record<string, string> = {
-				Chrome: "🅱️",
-				Firefox: "🦊",
-				Safari: "🧭",
-				Edge: "📘"
-			};
-			return emojis[name] || "🌐";
-		}
-		if (type === "os") {
-			const emojis: Record<string, string> = {
-				Windows: "🪟",
-				macOS: "🍎",
-				Linux: "🐧",
-				Android: "🤖",
-				iOS: "📱"
-			};
-			return emojis[name] || "💻";
-		}
-		const emojis: Record<string, string> = {
-			Desktop: "💻",
-			Mobile: "📱",
-			Tablet: "📲"
-		};
-		return emojis[name] || "📱";
 	};
 
 	$effect(() => {
@@ -120,14 +68,14 @@
 					<div class="absolute right-0 top-[-64px] z-10 flex flex-col gap-1 border-2 border-accent p-2 rounded-md bg-background/10 backdrop-blur-md">
 						<div class="flex gap-4 text-sm text-muted-foreground">
 							<span>Visitors</span>
-							<span class="text-foreground">{formatNumber(data.summary.visitors)}</span>
+							<span class="text-foreground">{format_number(data.summary.visitors)}</span>
 							<span>Views</span>
-							<span class="text-foreground">{formatNumber(data.summary.entries)}</span>
+							<span class="text-foreground">{format_number(data.summary.entries)}</span>
 							<span>Sessions</span>
-							<span class="text-foreground">{formatNumber(data.summary.sessions)}</span>
+							<span class="text-foreground">{format_number(data.summary.sessions)}</span>
 						</div>
 						<div class="text-sm text-muted-foreground">
-							{formatDate(data.range.from)} - {formatDate(data.range.to)}
+							{format_date(data.range.from)} - {format_date(data.range.to)}
 						</div>
 					</div>
 				</section>
@@ -145,11 +93,11 @@
 											<div class="flex-1 truncate font-mono text-sm">{page.path}</div>
 											<div class="flex items-center gap-4 text-sm">
 												<div class="text-right">
-													<div class="font-medium">{formatNumber(page.visitors)}</div>
+													<div class="font-medium">{format_number(page.visitors)}</div>
 													<div class="text-xs text-muted-foreground">visitors</div>
 												</div>
 												<div class="text-right">
-													<div class="font-medium">{formatNumber(page.entries)}</div>
+													<div class="font-medium">{format_number(page.entries)}</div>
 													<div class="text-xs text-muted-foreground">views</div>
 												</div>
 											</div>
@@ -176,11 +124,11 @@
 											</div>
 											<div class="flex items-center gap-4 text-sm">
 												<div class="text-right">
-													<div class="font-medium">{formatNumber(source.visitors)}</div>
+													<div class="font-medium">{format_number(source.visitors)}</div>
 													<div class="text-xs text-muted-foreground">visitors</div>
 												</div>
 												<div class="text-right">
-													<div class="font-medium">{formatNumber(source.entries)}</div>
+													<div class="font-medium">{format_number(source.entries)}</div>
 													<div class="text-xs text-muted-foreground">entries</div>
 												</div>
 											</div>
@@ -230,12 +178,12 @@
 													{:else if loc.region}
 														{loc.region}, {countryCode}
 													{:else}
-														{getCountryName(countryCode)}
+														{get_country_name(countryCode)}
 													{/if}
 												</span>
 											</div>
 											<div class="text-right">
-												<div class="font-medium">{formatNumber(visitors)}</div>
+												<div class="font-medium">{format_number(visitors)}</div>
 												<div class="text-xs text-muted-foreground">visitors</div>
 											</div>
 										</div>
@@ -280,7 +228,7 @@
 										<div class="flex items-center justify-between rounded-lg bg-secondary p-3">
 											<div class="flex items-center gap-3">
 												<span class="text-lg"
-													>{getDeviceEmoji(name, dashboard.params.deviceView)}</span
+													>{get_device_emoji(name, dashboard.params.deviceView)}</span
 												>
 												<span class="text-sm">{name}</span>
 											</div>

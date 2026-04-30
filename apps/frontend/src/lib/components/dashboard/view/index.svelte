@@ -117,7 +117,7 @@
 											</div>
 											<div class="text-right">
 												<div class="font-medium">{format_number(source.entries)}</div>
-												<div class="text-xs text-muted-foreground">entries</div>
+												<div class="text-xs text-muted-foreground">views</div>
 											</div>
 										</div>
 									</div>

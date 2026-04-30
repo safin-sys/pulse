@@ -1,6 +1,6 @@
-# Pulse
+# Orbit
 
-Open-source web analytics platform.
+Web analytics platform.
 
 ## Tech Stack
 

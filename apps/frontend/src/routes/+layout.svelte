@@ -15,13 +15,20 @@
 	});
 
 	beforeNavigate((nav) => {
-		if (dashboard.demo && nav.to?.url && !nav.to.url.pathname.startsWith('/demo')) {
+		if (dashboard.demo && nav.to?.url && !nav.to.url.pathname.startsWith("/demo")) {
 			reset_dashboard();
 		}
 	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+	<script
+		src="https://orbit.pages.dev/orbit.js"
+		data-api-key="orb_a8687b3acf3f9eedeead5e3e42ee14dff55e94b1ca822cfd124b37a28e22391a"
+	></script>
+</svelte:head>
+
 <Toaster />
 {#if !auth.initialized}
 	<div class="flex h-screen w-full items-center justify-center bg-background">

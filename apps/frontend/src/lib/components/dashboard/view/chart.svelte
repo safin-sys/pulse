@@ -16,6 +16,20 @@
 	let canvas: HTMLCanvasElement;
 	let chart: Chart | null = null;
 
+	const expandHex = (hex: string): string => {
+		const clean = hex.replace("#", "").trim();
+		if (clean.length === 3) {
+			return (
+				"#" +
+				clean
+					.split("")
+					.map((c) => c + c)
+					.join("")
+			);
+		}
+		return "#" + clean;
+	};
+
 	const createChart = () => {
 		if (chart) {
 			chart.destroy();
@@ -27,16 +41,29 @@
 		if (!ctx) return;
 
 		const styles = getComputedStyle(document.documentElement);
-		const primary = styles.getPropertyValue("--primary").trim() || "#ffffff";
-		const muted = styles.getPropertyValue("--muted").trim() || "#0a0a0a";
-		const mutedFg = styles.getPropertyValue("--muted-foreground").trim() || "#888888";
+		const primary = expandHex(styles.getPropertyValue("--primary").trim() || "#ffffff");
+		const muted = expandHex(styles.getPropertyValue("--muted").trim() || "#0a0a0a");
+		const mutedFg = expandHex(styles.getPropertyValue("--muted-foreground").trim() || "#888888");
 
 		const gradient = ctx.createLinearGradient(0, 0, 0, 250);
 		gradient.addColorStop(0, `${primary}08`);
 		gradient.addColorStop(0.8, `${primary}03`);
 		gradient.addColorStop(1, `${primary}00`);
 
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const monthNames = [
+			"Jan",
+			"Feb",
+			"Mar",
+			"Apr",
+			"May",
+			"Jun",
+			"Jul",
+			"Aug",
+			"Sep",
+			"Oct",
+			"Nov",
+			"Dec"
+		];
 
 		const formatDate = (dateStr: string) => {
 			const date = new Date(dateStr);
@@ -141,6 +168,6 @@
 	});
 </script>
 
-<div class="w-full h-full min-h-[250px] {className}">
+<div class="h-full min-h-62.5 w-full {className}">
 	<canvas bind:this={canvas}></canvas>
 </div>

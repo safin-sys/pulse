@@ -127,6 +127,7 @@ const BROWSER_NAME_MAP: Record<string, string> = {
 	"opera gx": "operagx",
 	"opera mobile": "opera",
 	"opera mini": "opera",
+	"opera mobi": "opera",
 
 	// IE
 	ie: "internetexplorer",

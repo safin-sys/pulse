@@ -2,7 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { fade } from 'svelte/transition';
-	import { init } from '$lib/stores/auth.svelte';
+	import { auth, init } from '$lib/stores/auth.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { dashboard, reset_dashboard } from '$lib/stores/dashboard.svelte';
 	import { onMount } from 'svelte';
@@ -23,6 +23,12 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <Toaster />
-<div in:fade={{ duration: 150, delay: 150 }} out:fade={{ duration: 150 }}>
-	{@render children()}
-</div>
+{#if !auth.initialized}
+	<div class="flex h-screen w-full items-center justify-center bg-background">
+		<div class="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-foreground"></div>
+	</div>
+{:else}
+	<div in:fade={{ duration: 150, delay: 150 }} out:fade={{ duration: 150 }}>
+		{@render children()}
+	</div>
+{/if}

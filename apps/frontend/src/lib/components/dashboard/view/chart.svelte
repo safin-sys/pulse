@@ -15,26 +15,35 @@
 
 	let canvas: HTMLCanvasElement;
 	let chart: Chart | null = null;
-	let mounted = false;
 
-	Chart.register(...registerables); // ✅ Move outside — register once, not on every render
+	const expandHex = (hex: string): string => {
+		const clean = hex.replace("#", "").trim();
+		if (clean.length === 3) {
+			return (
+				"#" +
+				clean
+					.split("")
+					.map((c) => c + c)
+					.join("")
+			);
+		}
+		return "#" + clean;
+	};
 
 	const createChart = () => {
-		if (!canvas || !mounted) return; // ✅ Guard: don't run before mount
-
 		if (chart) {
 			chart.destroy();
-			chart = null;
 		}
+
+		Chart.register(...registerables);
 
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// ✅ Fallback to hardcoded values if CSS vars aren't loaded yet
 		const styles = getComputedStyle(document.documentElement);
-		const primary = styles.getPropertyValue("--primary").trim() || "#ffffff";
-		const muted = styles.getPropertyValue("--muted").trim() || "#0a0a0a";
-		const mutedFg = styles.getPropertyValue("--muted-foreground").trim() || "#888888";
+		const primary = expandHex(styles.getPropertyValue("--primary").trim() || "#ffffff");
+		const muted = expandHex(styles.getPropertyValue("--muted").trim() || "#0a0a0a");
+		const mutedFg = expandHex(styles.getPropertyValue("--muted-foreground").trim() || "#888888");
 
 		const gradient = ctx.createLinearGradient(0, 0, 0, 250);
 		gradient.addColorStop(0, `${primary}08`);
@@ -55,6 +64,7 @@
 			"Nov",
 			"Dec"
 		];
+
 		const formatDate = (dateStr: string) => {
 			const date = new Date(dateStr);
 			return `${monthNames[date.getMonth()]} ${date.getDate()}`;
@@ -85,7 +95,9 @@
 				responsive: true,
 				maintainAspectRatio: false,
 				plugins: {
-					legend: { display: false },
+					legend: {
+						display: false
+					},
 					tooltip: {
 						backgroundColor: muted,
 						titleColor: mutedFg,
@@ -100,9 +112,19 @@
 				},
 				scales: {
 					x: {
-						grid: { display: false },
-						ticks: { color: mutedFg, maxTicksLimit: 6, font: { size: 11 } },
-						border: { display: false },
+						grid: {
+							display: false
+						},
+						ticks: {
+							color: mutedFg,
+							maxTicksLimit: 6,
+							font: {
+								size: 11
+							}
+						},
+						border: {
+							display: false
+						},
 						afterFit: (scale) => {
 							scale.paddingLeft = 0;
 							scale.paddingRight = 0;
@@ -110,33 +132,39 @@
 					},
 					y: {
 						display: false,
-						grid: { display: false },
-						ticks: { display: false },
-						border: { display: false }
+						grid: {
+							display: false
+						},
+						ticks: {
+							display: false
+						},
+						border: {
+							display: false
+						}
 					}
 				},
-				interaction: { intersect: false, mode: "index" }
+				interaction: {
+					intersect: false,
+					mode: "index"
+				}
 			}
 		});
 	};
 
-	// ✅ $effect only — don't also call in onMount (double render)
 	$effect(() => {
-		if (data && canvas && mounted) {
+		if (data && canvas) {
 			createChart();
 		}
 	});
 
 	onMount(() => {
-		mounted = true;
-		// ✅ Defer to next tick so canvas bind:this is guaranteed
-		requestAnimationFrame(() => {
-			createChart();
-		});
+		createChart();
 	});
 
 	onDestroy(() => {
-		chart?.destroy();
+		if (chart) {
+			chart.destroy();
+		}
 	});
 </script>
 

@@ -98,13 +98,13 @@
 	>
 		<div class="flex items-center gap-3">
 			{#if device_view === "device"}
-				{#if device_name === "Desktop"}
+				{#if device_name === "desktop"}
 					<HugeiconsIcon icon={Computer} strokeWidth={2} class="size-4" />
 				{/if}
-				{#if device_name === "Mobile"}
+				{#if device_name === "mobile"}
 					<HugeiconsIcon icon={Mobile} strokeWidth={2} class="size-4" />
 				{/if}
-				{#if device_name === "Tablet"}
+				{#if device_name === "tablet"}
 					<HugeiconsIcon icon={Tablet} strokeWidth={2} class="size-4" />
 				{/if}
 			{:else}

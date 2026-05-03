@@ -15,17 +15,22 @@
 
 	let canvas: HTMLCanvasElement;
 	let chart: Chart | null = null;
+	let mounted = false;
+
+	Chart.register(...registerables); // ✅ Move outside — register once, not on every render
 
 	const createChart = () => {
+		if (!canvas || !mounted) return; // ✅ Guard: don't run before mount
+
 		if (chart) {
 			chart.destroy();
+			chart = null;
 		}
-
-		Chart.register(...registerables);
 
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
+		// ✅ Fallback to hardcoded values if CSS vars aren't loaded yet
 		const styles = getComputedStyle(document.documentElement);
 		const primary = styles.getPropertyValue("--primary").trim() || "#ffffff";
 		const muted = styles.getPropertyValue("--muted").trim() || "#0a0a0a";
@@ -36,8 +41,20 @@
 		gradient.addColorStop(0.8, `${primary}03`);
 		gradient.addColorStop(1, `${primary}00`);
 
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+		const monthNames = [
+			"Jan",
+			"Feb",
+			"Mar",
+			"Apr",
+			"May",
+			"Jun",
+			"Jul",
+			"Aug",
+			"Sep",
+			"Oct",
+			"Nov",
+			"Dec"
+		];
 		const formatDate = (dateStr: string) => {
 			const date = new Date(dateStr);
 			return `${monthNames[date.getMonth()]} ${date.getDate()}`;
@@ -68,9 +85,7 @@
 				responsive: true,
 				maintainAspectRatio: false,
 				plugins: {
-					legend: {
-						display: false
-					},
+					legend: { display: false },
 					tooltip: {
 						backgroundColor: muted,
 						titleColor: mutedFg,
@@ -85,19 +100,9 @@
 				},
 				scales: {
 					x: {
-						grid: {
-							display: false
-						},
-						ticks: {
-							color: mutedFg,
-							maxTicksLimit: 6,
-							font: {
-								size: 11
-							}
-						},
-						border: {
-							display: false
-						},
+						grid: { display: false },
+						ticks: { color: mutedFg, maxTicksLimit: 6, font: { size: 11 } },
+						border: { display: false },
 						afterFit: (scale) => {
 							scale.paddingLeft = 0;
 							scale.paddingRight = 0;
@@ -105,42 +110,36 @@
 					},
 					y: {
 						display: false,
-						grid: {
-							display: false
-						},
-						ticks: {
-							display: false
-						},
-						border: {
-							display: false
-						}
+						grid: { display: false },
+						ticks: { display: false },
+						border: { display: false }
 					}
 				},
-				interaction: {
-					intersect: false,
-					mode: "index"
-				}
+				interaction: { intersect: false, mode: "index" }
 			}
 		});
 	};
 
+	// ✅ $effect only — don't also call in onMount (double render)
 	$effect(() => {
-		if (data && canvas) {
+		if (data && canvas && mounted) {
 			createChart();
 		}
 	});
 
 	onMount(() => {
-		createChart();
+		mounted = true;
+		// ✅ Defer to next tick so canvas bind:this is guaranteed
+		requestAnimationFrame(() => {
+			createChart();
+		});
 	});
 
 	onDestroy(() => {
-		if (chart) {
-			chart.destroy();
-		}
+		chart?.destroy();
 	});
 </script>
 
-<div class="w-full h-full min-h-[250px] {className}">
+<div class="h-full min-h-62.5 w-full {className}">
 	<canvas bind:this={canvas}></canvas>
 </div>

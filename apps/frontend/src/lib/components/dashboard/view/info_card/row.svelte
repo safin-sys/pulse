@@ -5,7 +5,7 @@
 	import { get_device_icon } from "$lib/helpers/get_device_icon";
 	import { dashboard } from "$lib/stores/dashboard.svelte";
 	import { HugeiconsIcon } from "@hugeicons/svelte";
-	import { Computer, Mobile, Tablet } from "@hugeicons/core-free-icons";
+	import { Computer, InternetIcon, Mobile, Tablet } from "@hugeicons/core-free-icons";
 	import type { PageRow, ReferrerRow, LocationRow, DeviceRowType } from "$lib/types/dashboard";
 
 	type RowType = "top_pages" | "referrers" | "locations" | "devices";
@@ -16,6 +16,8 @@
 		first
 	}: { type: RowType; row: PageRow | ReferrerRow | LocationRow | DeviceRowType; first: boolean } =
 		$props();
+
+	let flagError = $state(false);
 </script>
 
 {#if type === "top_pages"}
@@ -68,7 +70,16 @@
 		data-first-entry={first ? true : undefined}
 	>
 		<div class="flex items-center gap-3">
-			<img src={get_country_flag(country_code)} alt={country_code} class="h-4 w-6 object-cover" />
+			{#if !flagError}
+				<img
+					src={get_country_flag(country_code)}
+					alt={country_code}
+					class="h-4 w-6 object-cover"
+					onerror={() => (flagError = true)}
+				/>
+			{:else}
+				<span>🏳️</span>
+			{/if}
 			<span class="text-sm">{location_name}</span>
 		</div>
 		<div class="text-right">
@@ -97,7 +108,17 @@
 					<HugeiconsIcon icon={Tablet} strokeWidth={2} class="size-4" />
 				{/if}
 			{:else}
-				<img src={get_device_icon(device_name, device_view)} alt={device_name} class="h-6 w-6" />
+				{#key device_name}
+					{@const icon = get_device_icon(device_name, device_view)}
+					<div class="flex h-6 w-6 shrink-0 items-center justify-center">
+						{#if icon}
+							<img src={icon} alt={device_name} class="h-6 w-6" />
+						{/if}
+						{#if !icon}
+							<HugeiconsIcon icon={InternetIcon} strokeWidth={2} class="size-4" />
+						{/if}
+					</div>
+				{/key}
 			{/if}
 			<span class="text-sm">{device_name}</span>
 		</div>

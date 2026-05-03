@@ -5,10 +5,12 @@
 
 	let {
 		data,
-		label = "Visitors"
+		label = "Visitors",
+		className = ""
 	}: {
 		data: ChartPoint[];
 		label?: string;
+		className?: string;
 	} = $props();
 
 	let canvas: HTMLCanvasElement;
@@ -24,25 +26,41 @@
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-		gradient.addColorStop(0, "rgba(59, 130, 246, 0.3)");
-		gradient.addColorStop(1, "rgba(59, 130, 246, 0)");
+		const styles = getComputedStyle(document.documentElement);
+		const primary = styles.getPropertyValue("--primary").trim() || "#ffffff";
+		const muted = styles.getPropertyValue("--muted").trim() || "#0a0a0a";
+		const mutedFg = styles.getPropertyValue("--muted-foreground").trim() || "#888888";
+
+		const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+		gradient.addColorStop(0, `${primary}08`);
+		gradient.addColorStop(0.8, `${primary}03`);
+		gradient.addColorStop(1, `${primary}00`);
+
+		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+		const formatDate = (dateStr: string) => {
+			const date = new Date(dateStr);
+			return `${monthNames[date.getMonth()]} ${date.getDate()}`;
+		};
 
 		chart = new Chart(ctx, {
 			type: "line",
 			data: {
-				labels: data.map((d) => d.date),
+				labels: data.map((d) => formatDate(d.date)),
 				datasets: [
 					{
 						label,
 						data: data.map((d) => d.visitors),
-						borderColor: "#3b82f6",
+						borderColor: mutedFg,
 						backgroundColor: gradient,
 						fill: true,
 						tension: 0.4,
 						pointRadius: 0,
 						pointHoverRadius: 4,
-						borderWidth: 2
+						pointHoverBackgroundColor: muted,
+						pointHoverBorderColor: primary,
+						pointHoverBorderWidth: 2,
+						borderWidth: 1.5
 					}
 				]
 			},
@@ -54,12 +72,15 @@
 						display: false
 					},
 					tooltip: {
-						backgroundColor: "rgba(0, 0, 0, 0.8)",
-						titleColor: "#fff",
-						bodyColor: "#fff",
-						padding: 12,
-						cornerRadius: 8,
-						displayColors: false
+						backgroundColor: muted,
+						titleColor: mutedFg,
+						bodyColor: primary,
+						padding: 10,
+						cornerRadius: 6,
+						displayColors: false,
+						callbacks: {
+							label: (ctx) => `${(ctx.parsed.y ?? 0).toLocaleString()} views`
+						}
 					}
 				},
 				scales: {
@@ -68,20 +89,27 @@
 							display: false
 						},
 						ticks: {
-							color: "rgba(255, 255, 255, 0.5)",
-							maxTicksLimit: 8
+							color: mutedFg,
+							maxTicksLimit: 6,
+							font: {
+								size: 11
+							}
 						},
 						border: {
 							display: false
+						},
+						afterFit: (scale) => {
+							scale.paddingLeft = 0;
+							scale.paddingRight = 0;
 						}
 					},
 					y: {
+						display: false,
 						grid: {
-							color: "rgba(255, 255, 255, 0.1)"
+							display: false
 						},
 						ticks: {
-							color: "rgba(255, 255, 255, 0.5)",
-							maxTicksLimit: 5
+							display: false
 						},
 						border: {
 							display: false
@@ -113,6 +141,6 @@
 	});
 </script>
 
-<div class="w-full h-full min-h-[250px]">
+<div class="w-full h-full min-h-[250px] {className}">
 	<canvas bind:this={canvas}></canvas>
 </div>

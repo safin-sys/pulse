@@ -17,6 +17,7 @@
 		"@faker-js/faker": "^10.4.0",
 		"@orbit/backend": "workspace:*",
 		"chart.js": "^4.5.1",
+		"countries-list": "^3.3.0",
 		"hono": "4.12.9"
 	},
 	"devDependencies": {

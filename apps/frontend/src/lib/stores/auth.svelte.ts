@@ -4,6 +4,7 @@ export let auth = $state({
 	user: null,
 	is_authenticated: false,
 	loading: false,
+	initialized: false,
 	error: ""
 });
 
@@ -21,6 +22,7 @@ export const init = async () => {
 		auth.is_authenticated = true;
 	}
 	auth.loading = false;
+	auth.initialized = true;
 };
 
 export const login = async (email: string, password: string) => {

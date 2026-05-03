@@ -146,6 +146,24 @@
 	}
 }
 
+@utility thin-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: var(--muted) transparent;
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--muted);
+		border-radius: 9999px;
+	}
+	&::-webkit-scrollbar-thumb:hover {
+		background: var(--muted-foreground);
+	}
+}
+
 @utility no-scrollbar {
 	-ms-overflow-style: none;
 	scrollbar-width: none;

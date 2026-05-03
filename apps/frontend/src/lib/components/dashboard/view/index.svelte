@@ -6,11 +6,12 @@
 	import { format_number } from "$lib/helpers/format_number";
 	import { format_date } from "$lib/helpers/format_date";
 	import InfoCard from "$lib/components/dashboard/view/info_card/index.svelte";
+	import { projects } from "$lib/stores/projects.svelte";
 
 	let { data, error, loading } = $derived(dashboard);
 
 	$effect(() => {
-		JSON.stringify(dashboard.params); // track params only
+		JSON.stringify({ ...dashboard.params, ...projects.selected_project }); // track params only
 		untrack(() => fetch_dashboard());
 	});
 </script>

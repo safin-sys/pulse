@@ -3,4 +3,5 @@ export interface Project {
 	name: string;
 	domain: string;
 	api_key?: string;
+	allowed_domains?: string[] | null;
 }

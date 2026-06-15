@@ -6,7 +6,7 @@ import {
     get_project_by_id,
     get_projects_by_owner_id,
     delete_project,
-    rotate_api_key,
+    update_api_key,
 } from "./repository";
 
 const create = async (
@@ -57,6 +57,7 @@ const create = async (
 
 const update = async (
     db: D1Database,
+    CACHE_KV: KVNamespace,
     project_id: string,
     owner_id: string,
     data: UpdateProjectBody,
@@ -84,12 +85,30 @@ const update = async (
         }
 
         await update_project(db, project_id, data);
+
+        // Invalidate cache if allowed_domains is updated
+        if (
+            JSON.stringify(data.allowed_domains ?? null) !==
+            JSON.stringify(
+                project.allowed_domains
+                    ? (JSON.parse(project.allowed_domains) as string[])
+                    : null,
+            )
+        ) {
+            await CACHE_KV.delete(project.api_key);
+            await CACHE_KV.delete(owner_id);
+        }
         return {
             success: true,
             message: "Project updated successfully",
             data: {
                 project: {
-                    name: project.name,
+                    name: data.name ?? project.name,
+                    allowed_domains:
+                        data.allowed_domains ??
+                        (project.allowed_domains
+                            ? (JSON.parse(project.allowed_domains) as string[])
+                            : null),
                 },
             },
             error: null,
@@ -106,12 +125,18 @@ const update = async (
     }
 };
 
-const getAll = async (
+const get_all = async (
     db: D1Database,
     owner_id: string,
 ): Promise<AResponse> => {
     try {
-        const projects = await get_projects_by_owner_id(db, owner_id);
+        const rows = await get_projects_by_owner_id(db, owner_id);
+        const projects = rows.map((p) => ({
+            ...p,
+            allowed_domains: p.allowed_domains
+                ? JSON.parse(p.allowed_domains)
+                : null,
+        }));
 
         return {
             success: true,
@@ -133,7 +158,7 @@ const getAll = async (
     }
 };
 
-const deleteOne = async (
+const delete_one = async (
     db: D1Database,
     project_id: string,
     owner_id: string,
@@ -180,8 +205,9 @@ const deleteOne = async (
     }
 };
 
-const rotateApiKey = async (
+const rotate_api_key = async (
     db: D1Database,
+    CACHE_KV: KVNamespace,
     project_id: string,
     owner_id: string,
 ): Promise<AResponse> => {
@@ -207,8 +233,11 @@ const rotateApiKey = async (
             };
         }
 
+        // Invalidate cache
+        await CACHE_KV.delete(project.api_key);
+
         const new_api_key = `orb_${generateToken()}`;
-        await rotate_api_key(db, project_id, owner_id, new_api_key);
+        await update_api_key(db, project_id, owner_id, new_api_key);
 
         return {
             success: true,
@@ -230,4 +259,4 @@ const rotateApiKey = async (
     }
 };
 
-export { create, update, getAll, deleteOne, rotateApiKey };
+export { create, update, get_all, delete_one, rotate_api_key };

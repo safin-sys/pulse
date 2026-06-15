@@ -17,7 +17,7 @@
 						>Project Details</TabsTrigger
 					>
 					<TabsTrigger class="cursor-pointer p-4" value="allow-domain-list"
-						>Allow Domain List</TabsTrigger
+						>Domains</TabsTrigger
 					>
 				</TabsList>
 				<TabsContent value="project-details">

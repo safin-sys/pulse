@@ -23,7 +23,11 @@ const api_validation = async (
             };
         }
 
-        project = { projectId: row.id, domain: row.domain };
+        project = {
+            projectId: row.id,
+            domain: row.domain,
+            allowed_domains: row.allowed_domains ? JSON.parse(row.allowed_domains) : undefined,
+        };
 
         // populate cache
         await CACHE_KV.put(api_key, JSON.stringify(project), {
@@ -40,10 +44,10 @@ const api_validation = async (
     };
 };
 
-const domain_validation = (origin: string | undefined, domain: string) => {
+const domain_validation = (origin: string | undefined, domain: string, allowed_domains?: string[]) => {
     const originHostname = origin ? new URL(origin).hostname : null;
 
-    if (!originHostname || originHostname !== domain) {
+    if (!originHostname) {
         return {
             success: false,
             message: "Unauthorized domain",
@@ -52,6 +56,17 @@ const domain_validation = (origin: string | undefined, domain: string) => {
             code: 401,
         };
     }
+
+    if (originHostname === domain) return;
+    if (allowed_domains?.includes(originHostname)) return;
+
+    return {
+        success: false,
+        message: "Unauthorized domain",
+        data: null,
+        error: null,
+        code: 401,
+    };
 };
 
 const enrichment = (c: Context, userAgent: string): EnrichedBody => {

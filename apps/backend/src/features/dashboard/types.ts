@@ -167,3 +167,8 @@ export interface DashboardResponse {
     locations: LocationsBlock;
     devices: DevicesBlock;
 }
+
+export interface CachedProject {
+    domain: string;
+    allowed_domains?: string[];
+}

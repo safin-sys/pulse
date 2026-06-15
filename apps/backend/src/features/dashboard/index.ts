@@ -1,12 +1,11 @@
 import { Hono } from "hono";
 import response from "../../utils/response";
 import { verify } from "hono/jwt";
-import { get_dashboard } from "./service";
+import { get_dashboard, verify_ownership } from "./service";
 import { DashboardQueryParamsSchema } from "./types";
 import { getCookie } from "hono/cookie";
 
-const app = new Hono<{ Bindings: Bindings }>()
-.get("/:domain", async (c) => {
+const app = new Hono<{ Bindings: Bindings }>().get("/:domain", async (c) => {
     const token = getCookie(c, "access_token");
 
     if (!token) {
@@ -20,13 +19,35 @@ const app = new Hono<{ Bindings: Bindings }>()
     }
 
     try {
-        (await verify(token, c.env.ACCESS_TOKEN_SECRET, "HS256")) as unknown as {
+		// validate ownership
+        const { domain } = c.req.param();
+
+        const user = (await verify(
+            token,
+            c.env.ACCESS_TOKEN_SECRET,
+            "HS256",
+        )) as unknown as {
             id: string;
             role: string;
         };
 
+        const ownership_verifed = await verify_ownership(
+            c.env.DB,
+            c.env.CACHE_KV,
+            user.id,
+            domain,
+        );
+
+        if (!ownership_verifed) {
+            return response(c, {
+                success: false,
+                message: "User not authorized for this project",
+                data: null,
+                error: null,
+                code: 403,
+            });
+        }
         // query params and shit
-        const { domain } = c.req.param();
         const params_result = DashboardQueryParamsSchema.safeParse(
             c.req.query(),
         );

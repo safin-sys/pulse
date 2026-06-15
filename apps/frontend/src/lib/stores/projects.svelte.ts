@@ -54,13 +54,19 @@ export const update_project = async (
 ) => {
 	projects.error = "";
 	projects.loading = true;
-	const { error } = await api.update(project_id, body);
+	const { data, error } = await api.update(project_id, body);
 	if (error) {
 		projects.error = error?.message || "Something went wrong";
 		projects.loading = false;
 		return false;
 	}
-	fetch_projects();
+	const updated = data?.data?.project || body;
+	projects.data = projects.data.map((p) =>
+		p.id === project_id ? { ...p, ...updated } : p
+	);
+	if (projects.selected_project?.id === project_id) {
+		projects.selected_project = { ...projects.selected_project, ...updated };
+	}
 	projects.loading = false;
 	return true;
 };

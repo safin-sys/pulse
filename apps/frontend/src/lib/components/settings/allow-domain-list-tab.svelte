@@ -11,6 +11,19 @@
 
 	let domains = $state<string[]>([]);
 	let newDomain = $state("");
+	let domainError = $state("");
+
+	const domainPattern = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/;
+
+	const validate_domain = (value: string): string => {
+		if (!value) return "";
+		if (!domainPattern.test(value)) return "Enter a valid domain (e.g. example.com)";
+		return "";
+	};
+
+	$effect(() => {
+		domainError = validate_domain(newDomain.trim().toLowerCase());
+	});
 
 	$effect(() => {
 		if (projects.selected_project) {
@@ -21,6 +34,10 @@
 	const add_domain = async () => {
 		const domain = newDomain.trim().toLowerCase();
 		if (!domain) return;
+		if (domainError) {
+			toast.error(domainError, { position: "top-center" });
+			return;
+		}
 		if (domains.includes(domain)) {
 			toast.error("Domain already in list", { position: "top-center" });
 			return;
@@ -94,7 +111,11 @@
 									class="size-3.5 text-muted-foreground"
 								/>
 							</div>
-							<span class="font-mono text-sm tracking-tight">{domain}</span>
+							<span
+								title={domain}
+								class="max-w-45 truncate font-mono text-sm tracking-tight sm:max-w-70"
+								>{domain}</span
+							>
 						</div>
 						<Button
 							onclick={() => remove_domain(domain)}
@@ -111,16 +132,19 @@
 		<div class="flex flex-col gap-2">
 			<label for="new-domain" class="text-sm font-medium text-muted-foreground"> Add Domain </label>
 			<div class="flex gap-2">
-				<Input
-					id="new-domain"
-					type="text"
-					placeholder="example.com"
-					value={newDomain}
-					oninput={(e) => (newDomain = e.currentTarget.value)}
-					onkeydown={(e) => e.key === "Enter" && add_domain()}
-					class="h-10 flex-1"
-				/>
-				<Button onclick={add_domain} disabled={!newDomain.trim()} class="h-10">
+				<div class="relative flex-1">
+					<Input
+						id="new-domain"
+						type="text"
+						placeholder="example.com"
+						value={newDomain}
+						oninput={(e) => (newDomain = e.currentTarget.value)}
+						onkeydown={(e) => e.key === "Enter" && add_domain()}
+						class="h-10 w-full"
+						aria-invalid={!!domainError}
+					/>
+				</div>
+				<Button onclick={add_domain} disabled={!newDomain.trim() || !!domainError} class="h-10">
 					<HugeiconsIcon icon={Add01Icon} strokeWidth={2} class="size-4" />
 				</Button>
 			</div>

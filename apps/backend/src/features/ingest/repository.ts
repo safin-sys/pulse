@@ -3,12 +3,12 @@ import { EventRow } from "./types";
 const get_project = async (
     DB: D1Database,
     api_key: string,
-): Promise<{ id: string; domain: string } | null> => {
+): Promise<{ id: string; domain: string; allowed_domains: string | null } | null> => {
     return await DB.prepare(
-        `SELECT id, domain FROM projects WHERE api_key = ? AND is_active = 1 LIMIT 1`,
+        `SELECT id, domain, allowed_domains FROM projects WHERE api_key = ? AND is_active = 1 LIMIT 1`,
     )
         .bind(api_key)
-        .first<{ id: string; domain: string }>();
+        .first<{ id: string; domain: string; allowed_domains: string | null }>();
 };
 
 const event_insert = async (DB: D1Database, events: EventRow[]) => {

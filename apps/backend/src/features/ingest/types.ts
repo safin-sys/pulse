@@ -26,6 +26,7 @@ export type Payload = z.infer<typeof PayloadSchema>;
 export interface CachedProject {
     projectId: string;
     domain: string;
+    allowed_domains?: string[];
 }
 
 export interface EnrichedBody {

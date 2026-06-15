@@ -1,107 +1,5 @@
-// import {
-//     ChartPoint,
-//     DashboardFilters,
-//     DashboardQueryParams,
-//     DashboardResponse,
-//     DateRange,
-//     DevicesBlock,
-//     LocationsBlock,
-//     PagesBlock,
-//     SourcesBlock,
-//     SummaryBlock,
-// } from "./types";
-
-// const get_dashboard = async (
-//     domain: string,
-//     params: DashboardQueryParams,
-// ): Promise<DashboardResponse> => {
-//     const {
-//         range: param_range,
-//         // global filters
-//         hostname,
-//         page,
-//         referrer,
-//         country,
-//         device,
-//         browser,
-//         os,
-//     } = params;
-//     const range: DateRange = {
-//         from: "",
-//         to: "",
-//     };
-//     const filters: DashboardFilters = {
-//         hostname,
-//         page,
-//         referrer,
-//         country,
-//         device,
-//         browser,
-//         os,
-//     };
-//     const summary: SummaryBlock = { entries: 0, visitors: 0, sessions: 0 };
-//     const chart: ChartPoint[] = [
-//         {
-//             date: "",
-//             entries: 0,
-//             visitors: 0,
-//             sessions: 0,
-//         },
-//     ];
-//     const pages: PagesBlock = {
-//         view: "top",
-//         rows: [
-//             {
-//                 path: "/",
-//                 entries: 0,
-//                 visitors: 0,
-//             },
-//         ],
-//     };
-//     const sources: SourcesBlock = {
-//         view: "referrer",
-//         rows: [
-//             {
-//                 referrer: "google",
-//                 entries: 0,
-//                 visitors: 0,
-//             },
-//         ],
-//     };
-//     const locations: LocationsBlock = {
-//         view: "country",
-//         rows: [
-//             {
-//                 countryCode: "BD",
-//                 visitors: 0,
-//             },
-//         ],
-//     };
-//     const devices: DevicesBlock = {
-//         view: "browser",
-//         rows: [
-//             {
-//                 browser: "Chrome",
-//                 visitors: 0,
-//                 percentage: 0,
-//             },
-//         ],
-//     };
-//     return {
-//         range,
-//         filters,
-//         summary,
-//         chart,
-//         pages,
-//         sources,
-//         locations,
-//         devices,
-//     };
-// };
-
-// export { get_dashboard };
-
 import { resolve_range } from "../../utils/range";
+import { get_projects_by_owner_id } from "../projects/repository";
 import {
     query_summary,
     query_chart,
@@ -111,6 +9,7 @@ import {
     query_devices,
 } from "./repository";
 import {
+    CachedProject,
     DashboardFilters,
     DashboardQueryParams,
     DashboardResponse,
@@ -128,7 +27,7 @@ export const get_dashboard = async (
         .first<{ id: string }>();
 
     if (!project) throw new Error("Project not found");
-    
+
     const projectId = project?.id;
 
     const {
@@ -163,4 +62,40 @@ export const get_dashboard = async (
         locations: { view: locationView, rows: locations },
         devices: { view: deviceView, rows: devices },
     };
+};
+
+export const verify_ownership = async (
+    DB: D1Database,
+    CACHE_KV: KVNamespace,
+    id: string,
+    domain: string,
+): Promise<boolean> => {
+    let projects = await CACHE_KV.get<CachedProject[]>(id, "json");
+
+    if (!projects) {
+        const rows = await get_projects_by_owner_id(DB, id);
+
+        if (!rows.length) {
+            return false;
+        }
+
+        projects = rows.map((p) => ({
+            ...p,
+            allowed_domains: p.allowed_domains
+                ? JSON.parse(p.allowed_domains)
+                : null,
+        }));
+
+        // populate cache
+        await CACHE_KV.put(id, JSON.stringify(projects), {
+            expirationTtl: 3600,
+        });
+    }
+
+    const users_domains = projects.flatMap((p) => [
+        p.domain,
+        ...(p.allowed_domains ?? []),
+    ]);
+
+    return users_domains.includes(domain);
 };

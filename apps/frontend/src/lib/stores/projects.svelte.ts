@@ -3,7 +3,7 @@ import { dashboard } from "./dashboard.svelte";
 import { seed_projects } from "$lib/helpers/seed";
 import type { Project } from "$lib/types/project";
 
-export let projects = $state({
+export const projects = $state({
 	data: [] as Project[],
 	selected_project: null as null | Project,
 	loading: true,
@@ -48,7 +48,10 @@ export const create_project = async (name: string, domain: string) => {
 	return true;
 };
 
-export const update_project = async (project_id: string, body: { name?: string }) => {
+export const update_project = async (
+	project_id: string,
+	body: { name?: string; allowed_domains?: string[] }
+) => {
 	projects.error = "";
 	projects.loading = true;
 	const { error } = await api.update(project_id, body);
